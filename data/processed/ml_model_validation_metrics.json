@@ -1,0 +1,52 @@
+{
+  "model_1_win_probability": {
+    "roc_auc": 0.8657,
+    "brier_score": 0.1488,
+    "log_loss": 0.4444,
+    "features": [
+      "innings",
+      "overid",
+      "balls_remaining",
+      "runs_cum",
+      "wickets_down",
+      "crr",
+      "runs_needed",
+      "rrr",
+      "rate_gap",
+      "knock_out",
+      "match_par_rpo"
+    ],
+    "cv_method": "5-Fold GroupKFold(match_id)"
+  },
+  "model_2_expected_runs": {
+    "rmse": 1.7161,
+    "mae": 1.2965,
+    "features": [
+      "innings",
+      "overid",
+      "over_ball_num",
+      "balls_remaining",
+      "wickets_down",
+      "runs_needed",
+      "rrr",
+      "match_par_rpo"
+    ],
+    "cv_method": "5-Fold GroupKFold(match_id)"
+  },
+  "model_3_expected_dismissals": {
+    "roc_auc": 0.6096,
+    "brier_score": 0.0524,
+    "log_loss": 0.2117,
+    "features": [
+      "innings",
+      "overid",
+      "over_ball_num",
+      "balls_remaining",
+      "wickets_down",
+      "runs_needed",
+      "rrr",
+      "match_par_rpo"
+    ],
+    "cv_method": "5-Fold GroupKFold(match_id)"
+  }
+}

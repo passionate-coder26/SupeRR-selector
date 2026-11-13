@@ -1,0 +1,9 @@
+﻿.venv/
+venv/
+__pycache__/
+*.pyc
+.DS_Store
+scratch/
+data/raw/ball_by_ball.csv
+
+Data Pack/
