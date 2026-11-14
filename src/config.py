@@ -20,55 +20,49 @@ ACCENT_RED = "#EF4444"
 # =============================================================================
 # 2. STAGE 1: INFORMATION-THEORETIC WIN PROBABILITY & LEVERAGE (L_i)
 # =============================================================================
-LEVERAGE_BASELINE_REGIME = 1.0     # L_i <= 1.0: Ordinary / Baseline Regime
-LEVERAGE_HIGH_PRESSURE = 1.35      # L_i >= 1.35: True High-Leverage Crunch Regime (~top 18% deliveries)
-LEVERAGE_EXTREME_CRISIS = 2.0      # L_i >= 2.0: Extreme Crisis Regime (2x match average leverage)
+# Option B: High-Pressure threshold is learned endogenously via 2-Component GMM on log(1 + L_i)
+GMM_RANDOM_STATE = 42
 BPI_EXPONENTIAL_DECAY = 0.70       # BPI = 100 * (1 - exp(-0.70 * L_i))
-HIGH_PRESSURE_THRESHOLD = 64.0      # Display index boundary
-EXTREME_PRESSURE_THRESHOLD = 80.0   # Display crisis boundary
 PAR_RUN_RATE_T20 = 8.15             # Global par RPO
 DEFAULT_VENUE_PAR_RPO = 8.35        # Venue par baseline
+
+# Backward compatibility / Display fallbacks
+LEVERAGE_BASELINE_REGIME = 1.0
+LEVERAGE_HIGH_PRESSURE = 1.0        # Dynamically replaced by L*_GMM in analytics_engine
+LEVERAGE_EXTREME_CRISIS = 2.0
+HIGH_PRESSURE_THRESHOLD = 64.0
+EXTREME_PRESSURE_THRESHOLD = 80.0
 
 # =============================================================================
 # 3. STAGE 2: ENDOGENOUS WICKET VALUATION & BIPARTITE RIDGE REGRESSION
 # =============================================================================
-WICKET_VALUE_MIN = 4.0             # Minimum endogenous run value of a wicket
-WICKET_VALUE_MAX = 24.0            # Maximum endogenous run value of a wicket
-RIDGE_ALPHA = 200.0                # L2 regularization for simultaneous bipartite matchup network
-K_SHRINK_OPPONENT_SKILL = 200.0    # Baseline shrinkage constant
+# Option B: Wicket cost C_wkt is predicted by ML Remaining-Runs Regressor (rem_runs_model)
+# Bowler wicket scaling factor lambda_wkt is learned via std(run_res) / std(wkt_res)
+# Ridge alpha* is learned via 5-Fold GroupKFold cross-validation over [50, 500]
+RIDGE_ALPHA_GRID = [50.0, 100.0, 150.0, 200.0, 250.0, 350.0, 500.0]
+RIDGE_ALPHA = 200.0                # Baseline / fallback alpha
 
 # =============================================================================
-# 4. STAGE 3: INDEPENDENT EMPIRICAL BAYES SHRINKAGE & CLUTCH ELEVATION
+# 4. STAGES 3 & 4: EMPIRICAL BAYES ANOVA VARIANCE DECOMPOSITION & PCA WEIGHTING
 # =============================================================================
-K_SHRINK_BASE = 250.0              # Sample shrinkage for baseline mean alpha (total balls)
-K_SHRINK_HP = 140.0                # Sample shrinkage for High-Pressure mean mu_HP (HP balls)
-K_SHRINK_ALPHA = 250.0             # Backward compatibility alias
-K_SHRINK_BETA = 140.0              # Backward compatibility alias
-Z_LEVERAGE_MIN = -0.8              # Centered leverage z_L = clip(L_i - 1.0, -0.8, 3.5)
+# Option B: K_base and K_HP are estimated via ANOVA variance decomposition: sigma2_within / sigma2_between
+# Beta prior (alpha_0, beta_0) is estimated via Method of Moments from sample match consistency rates
+# Composite weights are learned via PCA(n_components=1) on [Z(mu_HP), Z(alpha), Z(Delta), Z(Consistency)]
+# Volume cutoffs are computed as the empirical 75th percentile (upper quartile) of qualified players
+Z_LEVERAGE_MIN = -0.8
 Z_LEVERAGE_MAX = 3.5
 
-# =============================================================================
-# 5. STAGE 4: STANDARDIZED BAYESIAN LCB RANKINGS & UNIVERSAL ELIGIBILITY
-# =============================================================================
-# Standardized LCB Pressure Reliability Rating Formula:
-# PRR_Raw = 0.55 * Z(mu_HP_EB) + 0.20 * Z(Delta_EB) + 0.25 * Z(Consistency_Pct) - 0.35 * Z(SE_match)
-# PRR_Final = norm.cdf(0.85 * Z(PRR_Raw)) * 100
+# Fallback values
+K_SHRINK_BASE = 250.0
+K_SHRINK_HP = 140.0
 PRR_WEIGHT_MU_HP = 0.55
 PRR_WEIGHT_DELTA = 0.20
 PRR_WEIGHT_CONSISTENCY = 0.25
 PRR_PENALTY_SE_MATCH = 0.35
-PRR_PROBIT_SCALE = 0.85
+PRR_PROBIT_SCALE = 1.0             # Exact standard normal CDF Phi(Z) with sigma=1.0 under Option B
 PRIOR_MATCH_PSEUDO_COUNT = 10.0
-CONSISTENCY_FLOOR = 55.0
-ALPHA_FLOOR = -2.0
+CONSISTENCY_FLOOR = 50.0
 
-LCB_WEIGHT_EXPECTED_HP = 0.55      # Backward compatibility aliases
-LCB_WEIGHT_CLUTCH_DELTA = 0.20
-LCB_PENALTY_SE_MATCH = 0.35
-
-# Universal Sample Size Eligibility:
-# Batters: N_HP >= 100, M_HP >= 12, total_balls_faced >= 350, total_balls_faced >= total_balls_bowled
-# Bowlers: N_HP >= 120, M_HP >= 14, total_balls_bowled >= 500, total_balls_bowled >= total_balls_faced
 BATTER_MIN_HP_BALLS = 100
 BATTER_MIN_HP_MATCHES = 12
 BATTER_MIN_TOTAL_BALLS = 350

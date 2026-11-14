@@ -1,0 +1,69 @@
+{
+  "model_pipeline": "Option B: Pure First-Principles Econometric & ML Pipeline (Zero Manual Constants)",
+  "leverage_gmm_crossover_threshold": 0.9927,
+  "high_pressure_share_pct": 36.67,
+  "wicket_valuation_C_wkt": {
+    "model": "HistGradientBoostingRegressor(max_iter=150, learning_rate=0.06, max_depth=5)",
+    "mean": 4.55,
+    "median": 3.22,
+    "min": 1.0,
+    "max": 53.43
+  },
+  "bowler_wicket_variance_ratio_lambda": 1.3176,
+  "ridge_regularization_alpha_star": 500.0,
+  "empirical_bayes_shrinkage_K": {
+    "batters_base": 200.3,
+    "batters_hp": 222.55,
+    "bowlers_base": 500.0,
+    "bowlers_hp": 500.0
+  },
+  "unconstrained_ols_slopes": {
+    "rho_bat": 0.1115,
+    "rho_bowl": 0.3969
+  },
+  "beta_prior_match_consistency": {
+    "batters": {
+      "alpha_0": 4.5,
+      "beta_0": 4.67,
+      "nu_0": 9.18,
+      "mean_p": 0.4908
+    },
+    "bowlers": {
+      "alpha_0": 4.01,
+      "beta_0": 3.59,
+      "nu_0": 7.6,
+      "mean_p": 0.5281
+    }
+  },
+  "data_driven_volume_cutoffs_q75": {
+    "batters": {
+      "N_HP": 349.0,
+      "M_HP": 27.0,
+      "N_tot": 914.0,
+      "eligible_count": 20
+    },
+    "bowlers": {
+      "N_HP": 317.2,
+      "M_HP": 28.0,
+      "N_tot": 872.8,
+      "eligible_count": 28,
+      "pace_count": 15,
+      "spin_count": 13
+    }
+  },
+  "pca_composite_loadings": {
+    "batters": {
+      "Z_mu_HP": 0.3116,
+      "Z_alpha": 0.1964,
+      "Z_Delta": 0.3019,
+      "Z_Consistency": 0.1901
+    },
+    "bowlers": {
+      "Z_mu_HP": 0.3522,
+      "Z_alpha": 0.1004,
+      "Z_Delta": 0.3181,
+      "Z_Consistency": 0.2294
+    },
+    "downside_risk_penalty_w_se": 0.5
+  }
+}
