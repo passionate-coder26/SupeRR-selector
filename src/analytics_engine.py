@@ -508,23 +508,23 @@ def compute_hierarchical_random_slopes_and_lcb(leg, best_alpha=500.0, lambda_wkt
         ).reset_index()
         qual = stats[stats["n"] >= 10]
         if len(qual) < 5:
-            return 150.0
+            return 150.0, 1.0, 1.0
         sigma2_within = float(np.sum((qual["n"] - 1) * qual["v_var"]) / np.maximum(1, np.sum(qual["n"] - 1)))
         n_harmonic = float(len(qual) / np.sum(1.0 / qual["n"]))
         var_means = float(qual["v_mean"].var(ddof=1))
         sigma2_between = float(np.maximum(1.0, var_means - (sigma2_within / n_harmonic)))
         k_eb = float(np.clip(sigma2_within / sigma2_between, 30.0, 500.0))
-        return k_eb
+        return k_eb, sigma2_within, sigma2_between
 
     b_base = leg[leg["is_HP"] == False]
     b_hp = leg[leg["is_HP"] == True]
 
-    k_base_bat = anova_shrinkage(b_base, "striker_id", "v_bat")
-    k_hp_bat = anova_shrinkage(b_hp, "striker_id", "v_bat")
-    k_base_bowl = anova_shrinkage(b_base, "bowler_id", "v_bowl")
-    k_hp_bowl = anova_shrinkage(b_hp, "bowler_id", "v_bowl")
+    k_base_bat, _, s2_b_base = anova_shrinkage(b_base, "striker_id", "v_bat")
+    k_hp_bat, _, _ = anova_shrinkage(b_hp, "striker_id", "v_bat")
+    k_base_bowl, _, _ = anova_shrinkage(b_base, "bowler_id", "v_bowl")
+    k_hp_bowl, _, _ = anova_shrinkage(b_hp, "bowler_id", "v_bowl")
 
-    print(f"  ✓ Learned Batters Shrinkage: K_base = {k_base_bat:.2f}, K_HP = {k_hp_bat:.2f}")
+    print(f"  ✓ Learned Batters Shrinkage: K_base = {k_base_bat:.2f}, K_HP = {k_hp_bat:.2f} (sigma2_between_base = {s2_b_base:.2f})")
     print(f"  ✓ Learned Bowlers Shrinkage: K_base = {k_base_bowl:.2f}, K_HP = {k_hp_bowl:.2f}")
 
     # Method-of-Moments Beta Prior Estimation
@@ -595,11 +595,11 @@ def compute_hierarchical_random_slopes_and_lcb(leg, best_alpha=500.0, lambda_wkt
     bat_df["hp_fours"] = bat_df["hp_fours"].fillna(0)
     bat_df["hp_sixes"] = bat_df["hp_sixes"].fillna(0)
 
-    # Unconstrained OLS slope for batters
+    # De-attenuated OLS slope for batters (adjusted for measurement error via sigma2_between_base)
     cand_bat = bat_df[(bat_df["N_HP"] >= 50) & (bat_df["N_base"] >= 100)]
     cov_mat_b = np.cov(cand_bat["v_base_mean"], cand_bat["v_HP_weighted"])
-    rho_bat = float(cov_mat_b[0, 1] / max(1e-6, cov_mat_b[0, 0]))
-    print(f"  ✓ Unconstrained Empirical OLS Slope rho_bat: {rho_bat:.4f}")
+    rho_bat = float(np.clip(cov_mat_b[0, 1] / max(1e-6, s2_b_base), 0.20, 0.70))
+    print(f"  ✓ De-attenuated Empirical OLS Slope rho_bat: {rho_bat:.4f} (Cov = {cov_mat_b[0, 1]:.2f}, s2_between = {s2_b_base:.2f})")
 
     bat_df["alpha_EB"] = (bat_df["N_base"] / (bat_df["N_base"] + k_base_bat)) * bat_df["v_base_mean"]
     bat_df["mu_HP_EB"] = (bat_df["N_HP"] / (bat_df["N_HP"] + k_hp_bat)) * bat_df["v_HP_weighted"]
@@ -736,13 +736,16 @@ def compute_hierarchical_random_slopes_and_lcb(leg, best_alpha=500.0, lambda_wkt
     # ---------------------------------------------------------
     # Batters: Active specialist pool (primary batters with >= 5 HP matches)
     primary_bat = bat_df[(bat_df["N_tot"] >= bat_df["total_balls_bowled"]) & (bat_df["M_HP"] >= 5)].copy()
-    q50_bat_nhp = float(np.percentile(primary_bat["N_HP"], 50))
-    q50_bat_mhp = float(np.percentile(primary_bat["M_HP"], 50))
-    q50_bat_ntot = float(np.percentile(primary_bat["N_tot"], 50))
-    q75_bat_srhp = float(np.percentile(primary_bat["SR_HP"], 75))
-    print(f"  ✓ Batters 50th Percentile Cutoffs: N_HP >= {q50_bat_nhp:.1f}, M_HP >= {q50_bat_mhp:.1f}, N_tot >= {q50_bat_ntot:.1f} (75th pct HP SR = {q75_bat_srhp:.1f})")
+    q60_bat_nhp = float(np.percentile(primary_bat["N_HP"], 60))
+    q60_bat_mhp = float(np.percentile(primary_bat["M_HP"], 60))
+    q60_bat_ntot = float(np.percentile(primary_bat["N_tot"], 60))
 
-    # Bowlers: Active specialist pool (primary bowlers with >= 5 HP matches)
+    mean_pool_srhp = float(primary_bat["SR_HP"].mean())
+    mean_pool_srbase = float(primary_bat["SR_Base"].mean())
+    print(f"  ✓ Batters 60th Percentile Cutoffs: N_HP >= {q60_bat_nhp:.1f}, M_HP >= {q60_bat_mhp:.1f}, N_tot >= {q60_bat_ntot:.1f}")
+    print(f"  ✓ Active Batters Pool Mean HP SR: {mean_pool_srhp:.1f}, Mean Base SR: {mean_pool_srbase:.1f}")
+
+    # Bowlers: Active specialist pool (primary bowlers with >= 5 HP matches) (100% LOCKED)
     primary_bowl = bowl_df[(bowl_df["N_tot"] >= bowl_df["total_balls_faced"]) & (bowl_df["M_HP"] >= 5)]
     q75_bowl_nhp = float(np.percentile(primary_bowl["N_HP"], 75))
     q75_bowl_mhp = float(np.percentile(primary_bowl["M_HP"], 75))
@@ -788,16 +791,25 @@ def compute_hierarchical_random_slopes_and_lcb(leg, best_alpha=500.0, lambda_wkt
     primary_bat["Z_pool"] = (primary_bat["PRR_Raw"] - mu_bat_pool) / max(1e-6, sigma_bat_pool)
     primary_bat["PRR_Final"] = (norm.cdf(primary_bat["Z_pool"]) * 100.0).round(2)
 
-    # Universal Batter Eligibility Mask (High-Pressure Par & Acceleration):
+    # Universal Batter Eligibility Mask:
+    # 1. Career volume at Q60 of active specialists
+    # 2. Positive shrunk HP value & positive clutch elevation
+    # 3. Match consistency above sample prior mean
+    # 4. Outperform local situational par (SR_HP > Expected_SR_HP)
+    # 5. Outperform global active specialist mean HP SR (SR_HP > mean_pool_srhp)
+    # 6. Outperform global active specialist mean Base SR floor (SR_Base > mean_pool_srbase - 5.0)
+    # 7. Non-negative strike rate maintenance under pressure (SR_HP >= SR_Base - 1.5)
     bat_mask = (
-        (primary_bat["N_HP"] >= q50_bat_nhp) &
-        (primary_bat["M_HP"] >= q50_bat_mhp) &
-        (primary_bat["N_tot"] >= q50_bat_ntot) &
+        (primary_bat["N_HP"] >= q60_bat_nhp) &
+        (primary_bat["M_HP"] >= q60_bat_mhp) &
+        (primary_bat["N_tot"] >= q60_bat_ntot) &
         (primary_bat["mu_HP_EB"] > 0) &
         (primary_bat["Delta_EB"] > 0) &
         (primary_bat["Consistency_Pct"] > 100.0 * p_mean_bat) &
         (primary_bat["SR_HP"] > primary_bat["Expected_SR_HP"]) &
-        ((primary_bat["SR_HP"] >= primary_bat["SR_Base"]) | (primary_bat["SR_HP"] >= q75_bat_srhp))
+        (primary_bat["SR_HP"] > mean_pool_srhp) &
+        (primary_bat["SR_Base"] > mean_pool_srbase - 5.0) &
+        (primary_bat["SR_HP"] >= primary_bat["SR_Base"] - 1.5)
     )
     final_bat = primary_bat[bat_mask].copy().sort_values("PRR_Final", ascending=False).reset_index(drop=True)
     final_bat["Rank"] = range(1, len(final_bat) + 1)
@@ -952,11 +964,12 @@ def compute_hierarchical_random_slopes_and_lcb(leg, best_alpha=500.0, lambda_wkt
             }
         },
         "data_driven_volume_cutoffs": {
-            "batters_q50": {
-                "N_HP": round(q50_bat_nhp, 1),
-                "M_HP": round(q50_bat_mhp, 1),
-                "N_tot": round(q50_bat_ntot, 1),
-                "q75_HP_SR": round(q75_bat_srhp, 1),
+            "batters_q60": {
+                "N_HP": round(q60_bat_nhp, 1),
+                "M_HP": round(q60_bat_mhp, 1),
+                "N_tot": round(q60_bat_ntot, 1),
+                "pool_mean_HP_SR": round(mean_pool_srhp, 1),
+                "pool_mean_Base_SR": round(mean_pool_srbase, 1),
                 "eligible_count": int(len(final_bat))
             },
             "bowlers_q75": {
