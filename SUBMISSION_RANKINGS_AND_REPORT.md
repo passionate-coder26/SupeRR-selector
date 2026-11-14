@@ -14,16 +14,16 @@ Below are the exact ordered Top 10 lists produced by our pure, self-governing **
 
 | Unstop Rank | Player ID | Player Name | Total Balls | HP Balls ($L_i \ge L^*$) | HP Matches | Baseline SR | High-Pressure SR | Clutch Elevation ($\hat{\Delta}^{\text{EB}}$) | Consistency % | PRR Score |
 |:-----------:|:---------:|:------------|:-----------:|:-------------------------:|:----------:|:-----------:|:----------------:|:-----------------------------------------------:|:-------------:|:---------:|
-| **1** | `4260` | **Heinrich Klaasen** | 1,417 | 464 | 37 | 162.0 | **176.5** | +19.68 | 66.1% | **97.97** |
-| **2** | `6396` | **Tim David** | 1,226 | 503 | 40 | 174.1 | **182.7** | +17.70 | 68.1% | **97.58** |
-| **3** | `6281` | **Abhishek Sharma** | 2,317 | 744 | 63 | 189.3 | **182.1** | +26.65 | 65.8% | **94.62** |
-| **4** | `1699` | **Suryakumar Yadav** | 2,761 | 917 | 61 | 166.3 | **166.6** | +9.81 | 64.8% | **85.72** |
-| **5** | `3647` | **Shreyas Iyer** | 1,865 | 684 | 46 | 153.0 | **153.4** | +10.65 | 60.7% | **67.21** |
-| **6** | `813` | **Jos Buttler** | 2,829 | 985 | 61 | 155.6 | **155.0** | +9.39 | 56.3% | **64.00** |
-| **7** | `2367` | **Travis Head** | 1,129 | 431 | 38 | 173.6 | **177.0** | +14.48 | 62.5% | **48.70** |
-| **8** | `4853` | **Glenn Phillips** | 1,093 | 393 | 32 | 150.4 | **145.5** | +8.36 | 61.9% | **46.59** |
-| **9** | `818` | **Mitchell Marsh** | 1,724 | 569 | 36 | 157.2 | **156.9** | +5.37 | 65.3% | **43.49** |
-| **10** | `6288` | **Shubman Gill** | 2,711 | 881 | 58 | 148.2 | **151.9** | +5.49 | 57.3% | **42.96** |
+| **1** | `50284` | **Vaibhav Sooryavanshi** | 676 | 195 | 19 | 233.5 | **197.9** | +25.86 | 65.7% | **99.79** |
+| **2** | `4260` | **Heinrich Klaasen** | 1,417 | 464 | 37 | 162.0 | **176.5** | +19.68 | 66.1% | **99.30** |
+| **3** | `6396` | **Tim David** | 1,226 | 503 | 40 | 174.1 | **182.7** | +17.70 | 68.1% | **99.26** |
+| **4** | `6281` | **Abhishek Sharma** | 2,317 | 744 | 63 | 189.3 | **182.1** | +26.65 | 65.8% | **99.06** |
+| **5** | `5039` | **Rajat Patidar** | 918 | 324 | 28 | 166.0 | **171.3** | +17.10 | 71.3% | **98.75** |
+| **6** | `1699` | **Suryakumar Yadav** | 2,761 | 917 | 61 | 166.3 | **166.6** | +9.81 | 64.8% | **97.57** |
+| **7** | `7897` | **Namboori Tilak Varma** | 2,515 | 1,006 | 62 | 139.6 | **148.0** | +14.59 | 59.7% | **97.37** |
+| **8** | `8647` | **Sediqullah Atal** | 822 | 342 | 21 | 122.1 | **137.4** | +19.22 | 61.3% | **97.04** |
+| **9** | `4708` | **Rinku Singh** | 1,285 | 549 | 42 | 147.7 | **159.4** | +17.34 | 63.5% | **96.92** |
+| **10** | `838` | **Glenn Maxwell** | 958 | 375 | 24 | 156.1 | **168.5** | +19.00 | 58.8% | **96.20** |
 
 ### Top 10 Bowlers Under Pressure (Unstop Ranks 1 to 10)
 
@@ -51,16 +51,16 @@ Below are the exact ordered Top 10 lists produced by our pure, self-governing **
 
 | Rank | Option A Batter | Option A PRR | Option B Batter | Option B PRR | Option B HP SR | Option B Base SR | Option B Delta |
 |:----:|:----------------|:------------:|:----------------|:------------:|:--------------:|:----------------:|:--------------:|
-| **1** | Namboori Tilak Varma | 98.29 | **Heinrich Klaasen** | **97.97** | 176.5 | 162.0 | +19.68 |
-| **2** | David Miller | 93.10 | **Tim David** | **97.58** | 182.7 | 174.1 | +17.70 |
-| **3** | Rinku Singh | 88.20 | **Abhishek Sharma** | **94.62** | 182.1 | 189.3 | +26.65 |
-| **4** | Tim David | 85.30 | **Suryakumar Yadav** | **85.72** | 166.6 | 166.3 | +9.81 |
-| **5** | Cameron Green | 81.65 | **Shreyas Iyer** | **67.21** | 153.4 | 153.0 | +10.65 |
-| **6** | Jos Buttler | 79.14 | **Jos Buttler** | **64.00** | 155.0 | 155.6 | +9.39 |
-| **7** | Heinrich Klaasen | 75.36 | **Travis Head** | **48.70** | 177.0 | 173.6 | +14.48 |
-| **8** | Shashank Singh | 74.88 | **Glenn Phillips** | **46.59** | 145.5 | 150.4 | +8.36 |
-| **9** | Suryakumar Yadav | 69.98 | **Mitchell Marsh** | **43.49** | 156.9 | 157.2 | +5.37 |
-| **10** | Glenn Maxwell | 68.42 | **Shubman Gill** | **42.96** | 151.9 | 148.2 | +5.49 |
+| **1** | Namboori Tilak Varma | 98.29 | **Vaibhav Sooryavanshi** | **99.79** | 197.9 | 233.5 | +25.86 |
+| **2** | David Miller | 93.10 | **Heinrich Klaasen** | **99.30** | 176.5 | 162.0 | +19.68 |
+| **3** | Rinku Singh | 88.20 | **Tim David** | **99.26** | 182.7 | 174.1 | +17.70 |
+| **4** | Tim David | 85.30 | **Abhishek Sharma** | **99.06** | 182.1 | 189.3 | +26.65 |
+| **5** | Cameron Green | 81.65 | **Rajat Patidar** | **98.75** | 171.3 | 166.0 | +17.10 |
+| **6** | Jos Buttler | 79.14 | **Suryakumar Yadav** | **97.57** | 166.6 | 166.3 | +9.81 |
+| **7** | Heinrich Klaasen | 75.36 | **Namboori Tilak Varma** | **97.37** | 148.0 | 139.6 | +14.59 |
+| **8** | Shashank Singh | 74.88 | **Sediqullah Atal** | **97.04** | 137.4 | 122.1 | +19.22 |
+| **9** | Suryakumar Yadav | 69.98 | **Rinku Singh** | **96.92** | 159.4 | 147.7 | +17.34 |
+| **10** | Glenn Maxwell | 68.42 | **Glenn Maxwell** | **96.20** | 168.5 | 156.1 | +19.00 |
 
 ### Bowlers Comparison (Option A vs. Option B)
 
@@ -95,9 +95,9 @@ Every single constant, weight, threshold, and shrinkage factor in our pipeline h
 | **Empirical OLS Slope ($\\hat{\\rho}_bowl$)** | Cov(v_HP, v_base) / Var(v_base) | **0.3969** | Unconstrained baseline transfer slope for bowlers (resolves Lord's Paradox). |
 | **Batters Beta Prior Hyperparameters** | Method-of-Moments on Match Consistency Rates | **alpha_0 = 4.50, beta_0 = 4.67, nu_0 = 9.18** | Prior mean consistency p_bar = 0.491. |
 | **Bowlers Beta Prior Hyperparameters** | Method-of-Moments on Match Consistency Rates | **alpha_0 = 4.01, beta_0 = 3.59, nu_0 = 7.60** | Prior mean consistency p_bar = 0.528. |
-| **Batters Volume Floors ($Q_{75}$)** | Upper Quartile of Qualified Primary Batters | **N_HP >= 349.0, M_HP >= 27.0, N_tot >= 914.0** | Filters 20 universally qualified batters. |
+| **Batters Volume Floors ($Q_{50}$)** | Median of Active Specialist Batters ($\\ge 5$ HP matches) | **N_HP >= 189.0, M_HP >= 16.0, N_tot >= 491.0** | Filters 42 universally qualified batters. |
 | **Bowlers Volume Floors ($Q_{75}$)** | Upper Quartile of Qualified Primary Bowlers | **N_HP >= 317.2, M_HP >= 28.0, N_tot >= 872.8** | Filters 28 qualified bowlers (15 Pace, 13 Spin). |
-| **Batters Composite Weights** | PCA Component 1 on [Z(mu), Z(alpha), Z(Delta), Z(cons)] | **[0.3116, 0.1964, 0.3019, 0.1901]** | Downside penalty -0.50 * Z(SE). |
+| **Batters Composite Weights** | PCA Component 1 on [Z(mu), Z(alpha), Z(Delta), Z(cons)] | **[0.3061, 0.1405, 0.2999, 0.2535]** | Downside penalty -0.50 * Z(SE). |
 | **Bowlers Composite Weights** | PCA Component 1 on [Z(mu), Z(alpha), Z(Delta), Z(cons)] | **[0.3522, 0.1004, 0.3181, 0.2294]** | Downside penalty -0.50 * Z(SE). |
 
 ---
@@ -153,45 +153,45 @@ A 2-Component Gaussian Mixture Model (`GaussianMixture(n_components=2)`) is fitt
 ## EVIDENCE & CASE STUDIES: THE TOP 10 PLAYERS
 
 ### Top 10 Batters Under Pressure
-#### Rank 1: **Heinrich Klaasen** (`player_id: 4260` | `PRR_Score: 97.97`)
+#### Rank 1: **Vaibhav Sooryavanshi** (`player_id: 50284` | `PRR_Score: 99.79`)
+- **Clutch Metrics:** 195 HP Balls ($L_i \ge L^*$) across 19 matches | Base SR: `233.5` &rarr; **HP SR: `197.9`**
+- **Econometric Elevation:** Clutch Slope $\hat{\Delta}^{\text{EB}} = +25.86$ runs/100 balls | Consistency: **`65.7%`** | Match Risk $\text{SE} = 17.54$
+
+#### Rank 2: **Heinrich Klaasen** (`player_id: 4260` | `PRR_Score: 99.30`)
 - **Clutch Metrics:** 464 HP Balls ($L_i \ge L^*$) across 37 matches | Base SR: `162.0` &rarr; **HP SR: `176.5`**
 - **Econometric Elevation:** Clutch Slope $\hat{\Delta}^{\text{EB}} = +19.68$ runs/100 balls | Consistency: **`66.1%`** | Match Risk $\text{SE} = 11.18$
 
-#### Rank 2: **Tim David** (`player_id: 6396` | `PRR_Score: 97.58`)
+#### Rank 3: **Tim David** (`player_id: 6396` | `PRR_Score: 99.26`)
 - **Clutch Metrics:** 503 HP Balls ($L_i \ge L^*$) across 40 matches | Base SR: `174.1` &rarr; **HP SR: `182.7`**
 - **Econometric Elevation:** Clutch Slope $\hat{\Delta}^{\text{EB}} = +17.70$ runs/100 balls | Consistency: **`68.1%`** | Match Risk $\text{SE} = 10.94$
 
-#### Rank 3: **Abhishek Sharma** (`player_id: 6281` | `PRR_Score: 94.62`)
+#### Rank 4: **Abhishek Sharma** (`player_id: 6281` | `PRR_Score: 99.06`)
 - **Clutch Metrics:** 744 HP Balls ($L_i \ge L^*$) across 63 matches | Base SR: `189.3` &rarr; **HP SR: `182.1`**
 - **Econometric Elevation:** Clutch Slope $\hat{\Delta}^{\text{EB}} = +26.65$ runs/100 balls | Consistency: **`65.8%`** | Match Risk $\text{SE} = 20.18$
 
-#### Rank 4: **Suryakumar Yadav** (`player_id: 1699` | `PRR_Score: 85.72`)
+#### Rank 5: **Rajat Patidar** (`player_id: 5039` | `PRR_Score: 98.75`)
+- **Clutch Metrics:** 324 HP Balls ($L_i \ge L^*$) across 28 matches | Base SR: `166.0` &rarr; **HP SR: `171.3`**
+- **Econometric Elevation:** Clutch Slope $\hat{\Delta}^{\text{EB}} = +17.10$ runs/100 balls | Consistency: **`71.3%`** | Match Risk $\text{SE} = 13.09$
+
+#### Rank 6: **Suryakumar Yadav** (`player_id: 1699` | `PRR_Score: 97.57`)
 - **Clutch Metrics:** 917 HP Balls ($L_i \ge L^*$) across 61 matches | Base SR: `166.3` &rarr; **HP SR: `166.6`**
 - **Econometric Elevation:** Clutch Slope $\hat{\Delta}^{\text{EB}} = +9.81$ runs/100 balls | Consistency: **`64.8%`** | Match Risk $\text{SE} = 10.63$
 
-#### Rank 5: **Shreyas Iyer** (`player_id: 3647` | `PRR_Score: 67.21`)
-- **Clutch Metrics:** 684 HP Balls ($L_i \ge L^*$) across 46 matches | Base SR: `153.0` &rarr; **HP SR: `153.4`**
-- **Econometric Elevation:** Clutch Slope $\hat{\Delta}^{\text{EB}} = +10.65$ runs/100 balls | Consistency: **`60.7%`** | Match Risk $\text{SE} = 9.03$
+#### Rank 7: **Namboori Tilak Varma** (`player_id: 7897` | `PRR_Score: 97.37`)
+- **Clutch Metrics:** 1,006 HP Balls ($L_i \ge L^*$) across 62 matches | Base SR: `139.6` &rarr; **HP SR: `148.0`**
+- **Econometric Elevation:** Clutch Slope $\hat{\Delta}^{\text{EB}} = +14.59$ runs/100 balls | Consistency: **`59.7%`** | Match Risk $\text{SE} = 9.20$
 
-#### Rank 6: **Jos Buttler** (`player_id: 813` | `PRR_Score: 64.00`)
-- **Clutch Metrics:** 985 HP Balls ($L_i \ge L^*$) across 61 matches | Base SR: `155.6` &rarr; **HP SR: `155.0`**
-- **Econometric Elevation:** Clutch Slope $\hat{\Delta}^{\text{EB}} = +9.39$ runs/100 balls | Consistency: **`56.3%`** | Match Risk $\text{SE} = 9.42$
+#### Rank 8: **Sediqullah Atal** (`player_id: 8647` | `PRR_Score: 97.04`)
+- **Clutch Metrics:** 342 HP Balls ($L_i \ge L^*$) across 21 matches | Base SR: `122.1` &rarr; **HP SR: `137.4`**
+- **Econometric Elevation:** Clutch Slope $\hat{\Delta}^{\text{EB}} = +19.22$ runs/100 balls | Consistency: **`61.3%`** | Match Risk $\text{SE} = 11.21$
 
-#### Rank 7: **Travis Head** (`player_id: 2367` | `PRR_Score: 48.70`)
-- **Clutch Metrics:** 431 HP Balls ($L_i \ge L^*$) across 38 matches | Base SR: `173.6` &rarr; **HP SR: `177.0`**
-- **Econometric Elevation:** Clutch Slope $\hat{\Delta}^{\text{EB}} = +14.48$ runs/100 balls | Consistency: **`62.5%`** | Match Risk $\text{SE} = 15.16$
+#### Rank 9: **Rinku Singh** (`player_id: 4708` | `PRR_Score: 96.92`)
+- **Clutch Metrics:** 549 HP Balls ($L_i \ge L^*$) across 42 matches | Base SR: `147.7` &rarr; **HP SR: `159.4`**
+- **Econometric Elevation:** Clutch Slope $\hat{\Delta}^{\text{EB}} = +17.34$ runs/100 balls | Consistency: **`63.5%`** | Match Risk $\text{SE} = 11.95$
 
-#### Rank 8: **Glenn Phillips** (`player_id: 4853` | `PRR_Score: 46.59`)
-- **Clutch Metrics:** 393 HP Balls ($L_i \ge L^*$) across 32 matches | Base SR: `150.4` &rarr; **HP SR: `145.5`**
-- **Econometric Elevation:** Clutch Slope $\hat{\Delta}^{\text{EB}} = +8.36$ runs/100 balls | Consistency: **`61.9%`** | Match Risk $\text{SE} = 12.44$
-
-#### Rank 9: **Mitchell Marsh** (`player_id: 818` | `PRR_Score: 43.49`)
-- **Clutch Metrics:** 569 HP Balls ($L_i \ge L^*$) across 36 matches | Base SR: `157.2` &rarr; **HP SR: `156.9`**
-- **Econometric Elevation:** Clutch Slope $\hat{\Delta}^{\text{EB}} = +5.37$ runs/100 balls | Consistency: **`65.3%`** | Match Risk $\text{SE} = 11.06$
-
-#### Rank 10: **Shubman Gill** (`player_id: 6288` | `PRR_Score: 42.96`)
-- **Clutch Metrics:** 881 HP Balls ($L_i \ge L^*$) across 58 matches | Base SR: `148.2` &rarr; **HP SR: `151.9`**
-- **Econometric Elevation:** Clutch Slope $\hat{\Delta}^{\text{EB}} = +5.49$ runs/100 balls | Consistency: **`57.3%`** | Match Risk $\text{SE} = 8.79$
+#### Rank 10: **Glenn Maxwell** (`player_id: 838` | `PRR_Score: 96.20`)
+- **Clutch Metrics:** 375 HP Balls ($L_i \ge L^*$) across 24 matches | Base SR: `156.1` &rarr; **HP SR: `168.5`**
+- **Econometric Elevation:** Clutch Slope $\hat{\Delta}^{\text{EB}} = +19.00$ runs/100 balls | Consistency: **`58.8%`** | Match Risk $\text{SE} = 13.86$
 
 ### Top 10 Bowlers Under Pressure
 #### Rank 1: **Rashid Khan** (`player_id: 4722` | `Spin` | `PRR_Score: 96.14`)

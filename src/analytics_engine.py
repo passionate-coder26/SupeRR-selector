@@ -732,34 +732,80 @@ def compute_hierarchical_random_slopes_and_lcb(leg, best_alpha=500.0, lambda_wkt
     bowl_df["Expected_Econ_HP"] = ((bowl_df["HP_exp_conceded"] / bowl_df["N_HP"].clip(lower=1)) * 6.0).round(2)
 
     # ---------------------------------------------------------
-    # 3. DATA-DRIVEN 75TH-PERCENTILE VOLUME QUANTILES
+    # 3. DATA-DRIVEN VOLUME QUANTILES & ACTIVE SPECIALIST POOLS
     # ---------------------------------------------------------
-    primary_bat = bat_df[(bat_df["N_tot"] >= bat_df["total_balls_bowled"]) & (bat_df["M_HP"] >= 5)]
-    q75_bat_nhp = float(np.percentile(primary_bat["N_HP"], 75))
-    q75_bat_mhp = float(np.percentile(primary_bat["M_HP"], 75))
-    q75_bat_ntot = float(np.percentile(primary_bat["N_tot"], 75))
-    print(f"  ✓ Batters 75th Percentile Cutoffs: N_HP >= {q75_bat_nhp:.1f}, M_HP >= {q75_bat_mhp:.1f}, N_tot >= {q75_bat_ntot:.1f}")
+    # Batters: Active specialist pool (primary batters with >= 5 HP matches)
+    primary_bat = bat_df[(bat_df["N_tot"] >= bat_df["total_balls_bowled"]) & (bat_df["M_HP"] >= 5)].copy()
+    q50_bat_nhp = float(np.percentile(primary_bat["N_HP"], 50))
+    q50_bat_mhp = float(np.percentile(primary_bat["M_HP"], 50))
+    q50_bat_ntot = float(np.percentile(primary_bat["N_tot"], 50))
+    q75_bat_srhp = float(np.percentile(primary_bat["SR_HP"], 75))
+    print(f"  ✓ Batters 50th Percentile Cutoffs: N_HP >= {q50_bat_nhp:.1f}, M_HP >= {q50_bat_mhp:.1f}, N_tot >= {q50_bat_ntot:.1f} (75th pct HP SR = {q75_bat_srhp:.1f})")
 
+    # Bowlers: Active specialist pool (primary bowlers with >= 5 HP matches)
     primary_bowl = bowl_df[(bowl_df["N_tot"] >= bowl_df["total_balls_faced"]) & (bowl_df["M_HP"] >= 5)]
     q75_bowl_nhp = float(np.percentile(primary_bowl["N_HP"], 75))
     q75_bowl_mhp = float(np.percentile(primary_bowl["M_HP"], 75))
     q75_bowl_ntot = float(np.percentile(primary_bowl["N_tot"], 75))
     print(f"  ✓ Bowlers 75th Percentile Cutoffs: N_HP >= {q75_bowl_nhp:.1f}, M_HP >= {q75_bowl_mhp:.1f}, N_tot >= {q75_bowl_ntot:.1f}")
 
-    # Universal Eligibility Masks:
-    bat_mask = (
-        (bat_df["N_HP"] >= q75_bat_nhp) &
-        (bat_df["M_HP"] >= q75_bat_mhp) &
-        (bat_df["N_tot"] >= q75_bat_ntot) &
-        (bat_df["N_tot"] >= bat_df["total_balls_bowled"]) &
-        (bat_df["mu_HP_EB"] > 0) &
-        (bat_df["Delta_EB"] > 0) &
-        (bat_df["Consistency_Pct"] > 100.0 * p_mean_bat) &
-        (bat_df["SR_HP"] > bat_df["Expected_SR_HP"]) &
-        (bat_df["SR_Base"] > bat_df["Expected_SR_Base"])
-    )
-    eligible_bat = bat_df[bat_mask].copy().reset_index(drop=True)
+    # ---------------------------------------------------------
+    # 4. BATTERS PCA SCORING & FULL-POOL STANDARDIZATION
+    # ---------------------------------------------------------
+    # Fit PCA on the entire active specialist pool (M_HP >= 5)
+    Z_mu_pool = zscore(primary_bat["mu_HP_EB"])
+    Z_alpha_pool = zscore(primary_bat["alpha_EB"])
+    Z_delta_pool = zscore(primary_bat["Delta_EB"])
+    Z_cons_pool = zscore(primary_bat["Consistency_Pct"])
+    Z_se_pool = zscore(primary_bat["SE_match"])
 
+    X_pca_bat = np.column_stack([Z_mu_pool, Z_alpha_pool, Z_delta_pool, Z_cons_pool])
+    pca_bat = PCA(n_components=1)
+    pca_bat.fit(X_pca_bat)
+    loadings_bat = pca_bat.components_[0]
+    if loadings_bat[0] < 0:
+        loadings_bat = -loadings_bat
+    loadings_bat = loadings_bat / np.sum(loadings_bat)
+    w_se = 1.0 / np.sqrt(4.0)
+
+    prr_raw_bat = (
+        loadings_bat[0] * Z_mu_pool +
+        loadings_bat[1] * Z_alpha_pool +
+        loadings_bat[2] * Z_delta_pool +
+        loadings_bat[3] * Z_cons_pool -
+        w_se * Z_se_pool
+    )
+    primary_bat["Z_mu_HP"] = Z_mu_pool
+    primary_bat["Z_alpha"] = Z_alpha_pool
+    primary_bat["Z_Delta"] = Z_delta_pool
+    primary_bat["Z_Consistency"] = Z_cons_pool
+    primary_bat["Z_SE_match"] = Z_se_pool
+    primary_bat["PRR_Raw"] = prr_raw_bat
+
+    # Population Z-score standardization across all active specialist batters
+    mu_bat_pool = float(prr_raw_bat.mean())
+    sigma_bat_pool = float(prr_raw_bat.std())
+    primary_bat["Z_pool"] = (primary_bat["PRR_Raw"] - mu_bat_pool) / max(1e-6, sigma_bat_pool)
+    primary_bat["PRR_Final"] = (norm.cdf(primary_bat["Z_pool"]) * 100.0).round(2)
+
+    # Universal Batter Eligibility Mask (High-Pressure Par & Acceleration):
+    bat_mask = (
+        (primary_bat["N_HP"] >= q50_bat_nhp) &
+        (primary_bat["M_HP"] >= q50_bat_mhp) &
+        (primary_bat["N_tot"] >= q50_bat_ntot) &
+        (primary_bat["mu_HP_EB"] > 0) &
+        (primary_bat["Delta_EB"] > 0) &
+        (primary_bat["Consistency_Pct"] > 100.0 * p_mean_bat) &
+        (primary_bat["SR_HP"] > primary_bat["Expected_SR_HP"]) &
+        ((primary_bat["SR_HP"] >= primary_bat["SR_Base"]) | (primary_bat["SR_HP"] >= q75_bat_srhp))
+    )
+    final_bat = primary_bat[bat_mask].copy().sort_values("PRR_Final", ascending=False).reset_index(drop=True)
+    final_bat["Rank"] = range(1, len(final_bat) + 1)
+    print(f"  ✓ Learned Batters PCA Loadings [mu, alpha, delta, cons]: {loadings_bat.round(4)}")
+
+    # ---------------------------------------------------------
+    # 5. BOWLERS PCA SCORING & COHORT STANDARDIZATION (100% LOCKED)
+    # ---------------------------------------------------------
     bowl_mask = (
         (bowl_df["N_HP"] >= q75_bowl_nhp) &
         (bowl_df["M_HP"] >= q75_bowl_mhp) &
@@ -774,11 +820,8 @@ def compute_hierarchical_random_slopes_and_lcb(leg, best_alpha=500.0, lambda_wkt
     eligible_bowl = bowl_df[bowl_mask].copy().reset_index(drop=True)
     n_pace = (eligible_bowl["pace_or_spin"] == "Pace").sum()
     n_spin = (eligible_bowl["pace_or_spin"] == "Spin").sum()
-    print(f"  ✓ Universally Qualified Cohorts: {len(eligible_bat)} Batters, {len(eligible_bowl)} Bowlers (Pace: {n_pace}, Spin: {n_spin}).")
+    print(f"  ✓ Universally Qualified Cohorts: {len(final_bat)} Batters, {len(eligible_bowl)} Bowlers (Pace: {n_pace}, Spin: {n_spin}).")
 
-    # ---------------------------------------------------------
-    # 4. PCA COMPOSITE WEIGHTING & COHORT STANDARDIZATION
-    # ---------------------------------------------------------
     def score_with_pca(df_elig, role_col=None):
         Z_mu = zscore(df_elig["mu_HP_EB"])
         Z_alpha = zscore(df_elig["alpha_EB"])
@@ -827,10 +870,7 @@ def compute_hierarchical_random_slopes_and_lcb(leg, best_alpha=500.0, lambda_wkt
         res["Rank"] = range(1, len(res) + 1)
         return res, loadings
 
-    final_bat, bat_pca_w = score_with_pca(eligible_bat)
     final_bowl, bowl_pca_w = score_with_pca(eligible_bowl, "pace_or_spin")
-
-    print(f"  ✓ Learned Batters PCA Loadings [mu, alpha, delta, cons]: {bat_pca_w.round(4)}")
     print(f"  ✓ Learned Bowlers PCA Loadings [mu, alpha, delta, cons]: {bowl_pca_w.round(4)}")
 
     # ---------------------------------------------------------
@@ -851,7 +891,7 @@ def compute_hierarchical_random_slopes_and_lcb(leg, best_alpha=500.0, lambda_wkt
     top10_bat = final_bat.head(10).copy()
     top10_bat.to_csv(os.path.join(PROCESSED_DIR, "top_batters_under_pressure.csv"), index=False)
     b_m.to_csv(os.path.join(PROCESSED_DIR, "batter_match_by_match_consistency.csv"), index=False)
-    print(f"  ✓ Exported Official Option B Top 10 Batters (from {len(eligible_bat)} eligible batters).")
+    print(f"  ✓ Exported Official Option B Top 10 Batters (from {len(final_bat)} eligible batters).")
 
     final_bowl["player_name"] = final_bowl["bowler_name"]
     final_bowl["player_id"] = final_bowl["bowler_id"].astype(int)
@@ -911,14 +951,15 @@ def compute_hierarchical_random_slopes_and_lcb(leg, best_alpha=500.0, lambda_wkt
                 "mean_p": round(p_mean_bowl, 4)
             }
         },
-        "data_driven_volume_cutoffs_q75": {
-            "batters": {
-                "N_HP": round(q75_bat_nhp, 1),
-                "M_HP": round(q75_bat_mhp, 1),
-                "N_tot": round(q75_bat_ntot, 1),
-                "eligible_count": int(len(eligible_bat))
+        "data_driven_volume_cutoffs": {
+            "batters_q50": {
+                "N_HP": round(q50_bat_nhp, 1),
+                "M_HP": round(q50_bat_mhp, 1),
+                "N_tot": round(q50_bat_ntot, 1),
+                "q75_HP_SR": round(q75_bat_srhp, 1),
+                "eligible_count": int(len(final_bat))
             },
-            "bowlers": {
+            "bowlers_q75": {
                 "N_HP": round(q75_bowl_nhp, 1),
                 "M_HP": round(q75_bowl_mhp, 1),
                 "N_tot": round(q75_bowl_ntot, 1),
@@ -929,10 +970,10 @@ def compute_hierarchical_random_slopes_and_lcb(leg, best_alpha=500.0, lambda_wkt
         },
         "pca_composite_loadings": {
             "batters": {
-                "Z_mu_HP": round(float(bat_pca_w[0]), 4),
-                "Z_alpha": round(float(bat_pca_w[1]), 4),
-                "Z_Delta": round(float(bat_pca_w[2]), 4),
-                "Z_Consistency": round(float(bat_pca_w[3]), 4)
+                "Z_mu_HP": round(float(loadings_bat[0]), 4),
+                "Z_alpha": round(float(loadings_bat[1]), 4),
+                "Z_Delta": round(float(loadings_bat[2]), 4),
+                "Z_Consistency": round(float(loadings_bat[3]), 4)
             },
             "bowlers": {
                 "Z_mu_HP": round(float(bowl_pca_w[0]), 4),
