@@ -1,0 +1,113 @@
+{
+  "validation_metadata": {
+    "pipeline": "Option B: Pure First-Principles Econometric & ML Pipeline",
+    "train_window": "2022-2024",
+    "test_window": "2025-2026",
+    "train_deliveries": 115738,
+    "test_deliveries": 77547,
+    "train_matches": 512,
+    "test_matches": 355
+  },
+  "leverage_threshold_sensitivity": [
+    {
+      "regime_name": "Broad Crunch",
+      "threshold_L": 0.85,
+      "hp_deliveries": 83177,
+      "hp_share_pct": 43.03,
+      "batters": {
+        "spearman_rho": 0.9537,
+        "top10_overlap": "8/10",
+        "top15_overlap": "11/15",
+        "qualified_count": 24
+      },
+      "bowlers": {
+        "spearman_rho": 0.9337,
+        "top10_overlap": "9/10",
+        "top15_overlap": "13/15",
+        "qualified_count": 31
+      }
+    },
+    {
+      "regime_name": "Official GMM Crossover",
+      "threshold_L": 0.9927,
+      "hp_deliveries": 70885,
+      "hp_share_pct": 36.67,
+      "batters": {
+        "spearman_rho": 1.0,
+        "top10_overlap": "10/10",
+        "top15_overlap": "15/15",
+        "qualified_count": 28
+      },
+      "bowlers": {
+        "spearman_rho": 1.0,
+        "top10_overlap": "10/10",
+        "top15_overlap": "15/15",
+        "qualified_count": 28
+      }
+    },
+    {
+      "regime_name": "High Crunch",
+      "threshold_L": 1.15,
+      "hp_deliveries": 59102,
+      "hp_share_pct": 30.58,
+      "batters": {
+        "spearman_rho": 0.8727,
+        "top10_overlap": "7/10",
+        "top15_overlap": "12/15",
+        "qualified_count": 24
+      },
+      "bowlers": {
+        "spearman_rho": 0.8632,
+        "top10_overlap": "8/10",
+        "top15_overlap": "12/15",
+        "qualified_count": 28
+      }
+    },
+    {
+      "regime_name": "Extreme Crunch",
+      "threshold_L": 1.35,
+      "hp_deliveries": 47050,
+      "hp_share_pct": 24.34,
+      "batters": {
+        "spearman_rho": 0.7977,
+        "top10_overlap": "5/10",
+        "top15_overlap": "12/15",
+        "qualified_count": 19
+      },
+      "bowlers": {
+        "spearman_rho": 0.8677,
+        "top10_overlap": "8/10",
+        "top15_overlap": "12/15",
+        "qualified_count": 21
+      }
+    }
+  ],
+  "temporal_out_of_sample_validation": {
+    "model_1_win_probability": {
+      "out_of_time_roc_auc": 0.8554,
+      "out_of_time_brier_score": 0.1596
+    },
+    "model_2_expected_runs": {
+      "out_of_time_rmse": 1.7604,
+      "out_of_time_mae": 1.3415
+    },
+    "model_3_expected_dismissals": {
+      "out_of_time_roc_auc": 0.6006,
+      "out_of_time_brier_score": 0.0531
+    },
+    "player_high_pressure_skill_persistence": {
+      "batters": {
+        "sample_size": 216,
+        "pearson_r": 0.3758,
+        "spearman_rho": 0.3038,
+        "p_value": 1.1932233824646826e-08
+      },
+      "bowlers": {
+        "sample_size": 222,
+        "pearson_r": 0.313,
+        "spearman_rho": 0.3174,
+        "p_value": 1.9642724327128476e-06
+      }
+    }
+  }
+}

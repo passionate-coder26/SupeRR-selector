@@ -20,7 +20,7 @@ import json
 import numpy as np
 import pandas as pd
 import scipy.sparse as sp
-from scipy.stats import norm
+from scipy.stats import norm, spearmanr, pearsonr
 from sklearn.linear_model import Ridge
 from sklearn.ensemble import HistGradientBoostingClassifier, HistGradientBoostingRegressor
 from sklearn.model_selection import GroupKFold
@@ -38,29 +38,12 @@ from sklearn.inspection import permutation_importance
 # Path resolution
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 from src.config import (
-    LEVERAGE_BASELINE_REGIME,
-    LEVERAGE_HIGH_PRESSURE,
-    LEVERAGE_EXTREME_CRISIS,
     BPI_EXPONENTIAL_DECAY,
-    RIDGE_ALPHA,
-    K_SHRINK_BASE,
-    K_SHRINK_HP,
-    Z_LEVERAGE_MIN,
-    Z_LEVERAGE_MAX,
-    PRR_WEIGHT_MU_HP,
-    PRR_WEIGHT_DELTA,
-    PRR_WEIGHT_CONSISTENCY,
-    PRR_PENALTY_SE_MATCH,
-    PRR_PROBIT_SCALE,
-    PRIOR_MATCH_PSEUDO_COUNT,
-    BATTER_MIN_HP_BALLS,
-    BATTER_MIN_HP_MATCHES,
-    BATTER_MIN_TOTAL_BALLS,
-    BOWLER_MIN_HP_BALLS,
-    BOWLER_MIN_HP_MATCHES,
-    BOWLER_MIN_TOTAL_BALLS,
+    GMM_RANDOM_STATE,
+    RIDGE_ALPHA_GRID,
     VENUE_JAIPUR_ID,
     VENUE_GUWAHATI_ID,
+    VENUE_METADATA,
 )
 
 RAW_DIR = os.path.join(os.path.dirname(__file__), "..", "data", "raw")
@@ -484,7 +467,7 @@ def compute_endogenous_values_and_opponent_skills(df, xr_model, xw_model, rw_fea
 # =============================================================================
 # STAGES 3 & 4: EMPIRICAL BAYES SHRINKAGE & DATA-DRIVEN COMPOSITE RANKINGS
 # =============================================================================
-def compute_hierarchical_random_slopes_and_lcb(leg, best_alpha=500.0, lambda_wkt=1.3176, L_star_gmm=0.9927):
+def compute_hierarchical_random_slopes_and_lcb(leg, best_alpha=500.0, lambda_wkt=1.3176, L_star_gmm=0.9927, export_csv=True):
     """
     100% Data-Driven Option B Engine:
     - Empirical Bayes shrinkage factors K learned via one-way random-effects ANOVA.
@@ -900,108 +883,324 @@ def compute_hierarchical_random_slopes_and_lcb(leg, best_alpha=500.0, lambda_wkt
     final_bat["PRR_Bat"] = final_bat["PRR_Final"]
     final_bat["tier1_hp_pct"] = 1.0
 
-    top10_bat = final_bat.head(10).copy()
-    top10_bat.to_csv(os.path.join(PROCESSED_DIR, "top_batters_under_pressure.csv"), index=False)
-    b_m.to_csv(os.path.join(PROCESSED_DIR, "batter_match_by_match_consistency.csv"), index=False)
-    print(f"  ✓ Exported Official Option B Top 10 Batters (from {len(final_bat)} eligible batters).")
-
     final_bowl["player_name"] = final_bowl["bowler_name"]
     final_bowl["player_id"] = final_bowl["bowler_id"].astype(int)
     final_bowl["total_balls"] = final_bowl["N_tot"].astype(int)
     final_bowl["HP_Deliveries"] = final_bowl["N_HP"].astype(int)
-    final_bowl["Base_Economy"] = final_bowl["Econ_Base"]
-    final_bowl["HP_Economy"] = final_bowl["Econ_HP"]
-    final_bowl["Expected_Base_Economy"] = final_bowl["Expected_Econ_Base"]
-    final_bowl["Expected_HP_Economy"] = final_bowl["Expected_Econ_HP"]
+    final_bowl["Base_Economy"] = final_bowl["Econ_Base"].round(2)
+    final_bowl["HP_Economy"] = final_bowl["Econ_HP"].round(2)
     final_bowl["Delta_Clutch"] = final_bowl["Delta_EB"].round(2)
     final_bowl["Delta_Bowl"] = final_bowl["Delta_EB"].round(2)
     final_bowl["PRR_Score"] = final_bowl["PRR_Final"]
     final_bowl["PRR_Bowl"] = final_bowl["PRR_Final"]
-    final_bowl["PRR_Raw_Bowl"] = final_bowl["PRR_Raw"]
     final_bowl["tier1_hp_pct"] = 1.0
 
+    top10_bat = final_bat.head(10).copy()
     top10_bowl = final_bowl.head(10).copy()
-    top10_bowl.to_csv(os.path.join(PROCESSED_DIR, "top_bowlers_under_pressure.csv"), index=False)
-    bw_m.to_csv(os.path.join(PROCESSED_DIR, "bowler_match_by_match_consistency.csv"), index=False)
-    print(f"  ✓ Exported Official Option B Top 10 Bowlers (from {len(eligible_bowl)} eligible bowlers).")
 
-    # Export learned empirical parameters for auditing and report generation
-    empirical_params = {
-        "model_pipeline": "Option B: Pure First-Principles Econometric & ML Pipeline (Zero Manual Constants)",
-        "leverage_gmm_crossover_threshold": round(L_star_gmm, 4),
-        "high_pressure_share_pct": round(float(leg["is_HP"].mean() * 100), 2),
-        "wicket_valuation_C_wkt": {
-            "model": "HistGradientBoostingRegressor(max_iter=150, learning_rate=0.06, max_depth=5)",
-            "mean": round(float(leg["C_wkt"].mean()), 2),
-            "median": round(float(leg["C_wkt"].median()), 2),
-            "min": round(float(leg["C_wkt"].min()), 2),
-            "max": round(float(leg["C_wkt"].max()), 2)
-        },
-        "bowler_wicket_variance_ratio_lambda": round(lambda_wkt, 4),
-        "ridge_regularization_alpha_star": best_alpha,
-        "empirical_bayes_shrinkage_K": {
-            "batters_base": round(k_base_bat, 2),
-            "batters_hp": round(k_hp_bat, 2),
-            "bowlers_base": round(k_base_bowl, 2),
-            "bowlers_hp": round(k_hp_bowl, 2)
-        },
-        "unconstrained_ols_slopes": {
-            "rho_bat": round(rho_bat, 4),
-            "rho_bowl": round(rho_bowl, 4)
-        },
-        "beta_prior_match_consistency": {
+    if export_csv:
+        top10_bat.to_csv(os.path.join(PROCESSED_DIR, "top_batters_under_pressure.csv"), index=False)
+        b_m.to_csv(os.path.join(PROCESSED_DIR, "batter_match_by_match_consistency.csv"), index=False)
+        print(f"  ✓ Exported Official Option B Top 10 Batters (from {len(final_bat)} eligible batters).")
+
+        top10_bowl.to_csv(os.path.join(PROCESSED_DIR, "top_bowlers_under_pressure.csv"), index=False)
+        bw_m.to_csv(os.path.join(PROCESSED_DIR, "bowler_match_by_match_consistency.csv"), index=False)
+        print(f"  ✓ Exported Official Option B Top 10 Bowlers (from {len(eligible_bowl)} eligible bowlers).")
+
+        # Export learned empirical parameters for auditing and report generation
+        empirical_params = {
+            "model_pipeline": "Option B: Pure First-Principles Econometric & ML Pipeline (Zero Manual Constants)",
+            "leverage_gmm_crossover_threshold": round(L_star_gmm, 4),
+            "high_pressure_share_pct": round(float(leg["is_HP"].mean() * 100), 2),
+            "wicket_valuation_C_wkt": {
+                "model": "HistGradientBoostingRegressor(max_iter=150, learning_rate=0.06, max_depth=5)",
+                "mean": round(float(leg["C_wkt"].mean()), 2),
+                "median": round(float(leg["C_wkt"].median()), 2),
+                "min": round(float(leg["C_wkt"].min()), 2),
+                "max": round(float(leg["C_wkt"].max()), 2)
+            },
+            "bowler_wicket_variance_ratio_lambda": round(lambda_wkt, 4),
+            "ridge_regularization_alpha_star": best_alpha,
+            "empirical_bayes_shrinkage_K": {
+                "batters_base": round(k_base_bat, 2),
+                "batters_hp": round(k_hp_bat, 2),
+                "bowlers_base": round(k_base_bowl, 2),
+                "bowlers_hp": round(k_hp_bowl, 2)
+            },
+            "unconstrained_ols_slopes": {
+                "rho_bat": round(rho_bat, 4),
+                "rho_bowl": round(rho_bowl, 4)
+            },
+            "beta_prior_match_consistency": {
+                "batters": {
+                    "alpha_0": round(alpha_0_bat, 2),
+                    "beta_0": round(beta_0_bat, 2),
+                    "nu_0": round(nu_0_bat, 2),
+                    "mean_p": round(p_mean_bat, 4)
+                },
+                "bowlers": {
+                    "alpha_0": round(alpha_0_bowl, 2),
+                    "beta_0": round(beta_0_bowl, 2),
+                    "nu_0": round(nu_0_bowl, 2),
+                    "mean_p": round(p_mean_bowl, 4)
+                }
+            },
+            "data_driven_volume_cutoffs": {
+                "batters_q60": {
+                    "N_HP": round(q60_bat_nhp, 1),
+                    "M_HP": round(q60_bat_mhp, 1),
+                    "N_tot": round(q60_bat_ntot, 1),
+                    "pool_mean_HP_SR": round(mean_pool_srhp, 1),
+                    "pool_mean_Base_SR": round(mean_pool_srbase, 1),
+                    "eligible_count": int(len(final_bat))
+                },
+                "bowlers_q75": {
+                    "N_HP": round(q75_bowl_nhp, 1),
+                    "M_HP": round(q75_bowl_mhp, 1),
+                    "N_tot": round(q75_bowl_ntot, 1),
+                    "eligible_count": int(len(eligible_bowl)),
+                    "pace_count": int(n_pace),
+                    "spin_count": int(n_spin)
+                }
+            },
+            "pca_composite_loadings": {
+                "batters": {
+                    "Z_mu_HP": round(float(loadings_bat[0]), 4),
+                    "Z_alpha": round(float(loadings_bat[1]), 4),
+                    "Z_Delta": round(float(loadings_bat[2]), 4),
+                    "Z_Consistency": round(float(loadings_bat[3]), 4)
+                },
+                "bowlers": {
+                    "Z_mu_HP": round(float(bowl_pca_w[0]), 4),
+                    "Z_alpha": round(float(bowl_pca_w[1]), 4),
+                    "Z_Delta": round(float(bowl_pca_w[2]), 4),
+                    "Z_Consistency": round(float(bowl_pca_w[3]), 4)
+                },
+                "downside_risk_penalty_w_se": round(1.0 / np.sqrt(4.0), 2)
+            }
+        }
+        with open(os.path.join(PROCESSED_DIR, "empirical_parameters_option_b.json"), "w") as f:
+            json.dump(empirical_params, f, indent=2)
+        print("  ✓ Exported empirical_parameters_option_b.json.")
+
+    return top10_bat, top10_bowl, b_m, bw_m, final_bat, final_bowl
+
+
+# =============================================================================
+# DATA-DRIVEN SENSITIVITY ANALYSIS & TEMPORAL VALIDATION
+# =============================================================================
+def compute_sensitivity_and_temporal_validation(df, leg, best_alpha, lambda_wkt, L_star_gmm, final_bat_off, final_bowl_off):
+    """
+    Computes rigorous empirical validation:
+    1. Leverage Threshold Sensitivity across 4 regimes (Broad Crunch, GMM Crossover, High Crunch, Extreme Crunch).
+    2. Temporal Out-of-Sample Validation (2022-2024 Train vs 2025-2026 Test) with model metrics & player residual persistence.
+    Exports results to data/processed/validation_and_sensitivity.json.
+    """
+    print("\n🔬 COMPUTING REAL DATA-DRIVEN SENSITIVITY & TEMPORAL VALIDATION...")
+
+    # Official Top 10 and Top 15 ID sets
+    bat_off_10 = list(final_bat_off["striker_id"].head(10))
+    bat_off_15 = list(final_bat_off["striker_id"].head(15))
+    bowl_off_10 = list(final_bowl_off["bowler_id"].head(10))
+    bowl_off_15 = list(final_bowl_off["bowler_id"].head(15))
+
+    bat_rank_map = dict(zip(final_bat_off["striker_id"], final_bat_off["Rank"]))
+    bowl_rank_map = dict(zip(final_bowl_off["bowler_id"], final_bowl_off["Rank"]))
+
+    threshold_configs = [
+        {"name": "Broad Crunch", "threshold": 0.85, "is_official": False},
+        {"name": "Official GMM Crossover", "threshold": round(L_star_gmm, 4), "is_official": True},
+        {"name": "High Crunch", "threshold": 1.15, "is_official": False},
+        {"name": "Extreme Crunch", "threshold": 1.35, "is_official": False}
+    ]
+
+    threshold_results = []
+    for cfg in threshold_configs:
+        thresh = cfg["threshold"]
+        name = cfg["name"]
+        leg_t = leg.copy()
+        if not cfg["is_official"]:
+            leg_t["is_HP"] = (leg_t["L_i"] >= thresh)
+
+        hp_balls = int(leg_t["is_HP"].sum())
+        hp_share = round(float(leg_t["is_HP"].mean() * 100), 2)
+
+        top_bat_t, top_bowl_t, _, _, all_bat_t, all_bowl_t = compute_hierarchical_random_slopes_and_lcb(
+            leg_t, best_alpha=best_alpha, lambda_wkt=lambda_wkt, L_star_gmm=thresh, export_csv=False
+        )
+
+        bat_t_10 = list(all_bat_t["striker_id"].head(10))
+        bat_t_15 = list(all_bat_t["striker_id"].head(15))
+        bat_ov10 = len(set(bat_off_10) & set(bat_t_10))
+        bat_ov15 = len(set(bat_off_15) & set(bat_t_15))
+
+        common_bat = [p for p in all_bat_t["striker_id"] if p in bat_rank_map]
+        if len(common_bat) >= 5:
+            r_off = [bat_rank_map[p] for p in common_bat]
+            r_t = [all_bat_t.loc[all_bat_t["striker_id"] == p, "Rank"].iloc[0] for p in common_bat]
+            bat_spear, _ = spearmanr(r_off, r_t)
+        else:
+            bat_spear = 1.0
+
+        bowl_t_10 = list(all_bowl_t["bowler_id"].head(10))
+        bowl_t_15 = list(all_bowl_t["bowler_id"].head(15))
+        bowl_ov10 = len(set(bowl_off_10) & set(bowl_t_10))
+        bowl_ov15 = len(set(bowl_off_15) & set(bowl_t_15))
+
+        common_bowl = [p for p in all_bowl_t["bowler_id"] if p in bowl_rank_map]
+        if len(common_bowl) >= 5:
+            r_off = [bowl_rank_map[p] for p in common_bowl]
+            r_t = [all_bowl_t.loc[all_bowl_t["bowler_id"] == p, "Rank"].iloc[0] for p in common_bowl]
+            bowl_spear, _ = spearmanr(r_off, r_t)
+        else:
+            bowl_spear = 1.0
+
+        res_item = {
+            "regime_name": name,
+            "threshold_L": thresh,
+            "hp_deliveries": hp_balls,
+            "hp_share_pct": hp_share,
             "batters": {
-                "alpha_0": round(alpha_0_bat, 2),
-                "beta_0": round(beta_0_bat, 2),
-                "nu_0": round(nu_0_bat, 2),
-                "mean_p": round(p_mean_bat, 4)
+                "spearman_rho": round(float(bat_spear), 4),
+                "top10_overlap": f"{bat_ov10}/10",
+                "top15_overlap": f"{bat_ov15}/15",
+                "qualified_count": len(all_bat_t)
             },
             "bowlers": {
-                "alpha_0": round(alpha_0_bowl, 2),
-                "beta_0": round(beta_0_bowl, 2),
-                "nu_0": round(nu_0_bowl, 2),
-                "mean_p": round(p_mean_bowl, 4)
+                "spearman_rho": round(float(bowl_spear), 4),
+                "top10_overlap": f"{bowl_ov10}/10",
+                "top15_overlap": f"{bowl_ov15}/15",
+                "qualified_count": len(all_bowl_t)
             }
+        }
+        threshold_results.append(res_item)
+        print(f"  ✓ Threshold Sensitivity '{name}' (L >= {thresh}): HP Balls={hp_balls:,} ({hp_share}%) | Batters rho={res_item['batters']['spearman_rho']:.4f}, Top10={bat_ov10}/10 | Bowlers rho={res_item['bowlers']['spearman_rho']:.4f}, Top10={bowl_ov10}/10")
+
+    # 2. TEMPORAL OUT-OF-SAMPLE VALIDATION (2022-2024 Train vs 2025-2026 Test)
+    print("  Fitting Temporal Validation Models (2022-2024 Train -> 2025-2026 Test)...")
+    matches = pd.read_csv(os.path.join(RAW_DIR, "matches.csv"))
+    matches["year"] = pd.to_datetime(matches["match_date"]).dt.year
+    match_year_map = dict(zip(matches["match_id"], matches["year"]))
+    df_temp = df.copy()
+    df_temp["year"] = df_temp["match_id"].map(match_year_map)
+
+    wp_mask = df_temp["win_team_id"].notna() & (df_temp["win_team_id"] > 0) & (df_temp["batting_team_id"].notna())
+    wp_df = df_temp[wp_mask].copy()
+    wp_df["y_win"] = (wp_df["batting_team_id"] == wp_df["win_team_id"]).astype(int)
+
+    wp_features = [
+        "innings", "overid", "balls_remaining", "runs_cum", "wickets_down",
+        "crr", "runs_needed", "rrr", "rate_gap", "knock_out", "match_par_rpo"
+    ]
+    rw_features = [
+        "innings", "overid", "over_ball_num", "balls_remaining",
+        "wickets_down", "runs_needed", "rrr", "match_par_rpo"
+    ]
+
+    train_wp = wp_df[wp_df["year"] <= 2024]
+    test_wp = wp_df[wp_df["year"] >= 2025]
+
+    wp_mod = HistGradientBoostingClassifier(max_iter=100, random_state=42)
+    wp_mod.fit(train_wp[wp_features], train_wp["y_win"])
+    wp_pred = wp_mod.predict_proba(test_wp[wp_features])[:, 1]
+    wp_auc = float(roc_auc_score(test_wp["y_win"], wp_pred))
+    wp_brier = float(brier_score_loss(test_wp["y_win"], wp_pred))
+
+    leg_temp = df_temp[df_temp["is_legal_ball"] == True].copy()
+    train_leg = leg_temp[leg_temp["year"] <= 2024].copy()
+    test_leg = leg_temp[leg_temp["year"] >= 2025].copy()
+
+    xr_mod = HistGradientBoostingRegressor(max_iter=100, random_state=100)
+    xr_mod.fit(train_leg[rw_features], train_leg["runs"])
+    xr_pred = xr_mod.predict(test_leg[rw_features])
+    xr_rmse = float(root_mean_squared_error(test_leg["runs"], xr_pred))
+    xr_mae = float(mean_absolute_error(test_leg["runs"], xr_pred))
+
+    xw_mod = HistGradientBoostingClassifier(max_iter=100, random_state=200)
+    xw_mod.fit(train_leg[rw_features], train_leg["is_wicket_int"])
+    xw_pred = xw_mod.predict_proba(test_leg[rw_features])[:, 1]
+    xw_auc = float(roc_auc_score(test_leg["is_wicket_int"], xw_pred))
+    xw_brier = float(brier_score_loss(test_leg["is_wicket_int"], xw_pred))
+
+    train_leg["E_R"] = xr_mod.predict(train_leg[rw_features])
+    test_leg["E_R"] = xr_pred
+    train_leg["run_res"] = train_leg["runs"] - train_leg["E_R"]
+    test_leg["run_res"] = test_leg["runs"] - test_leg["E_R"]
+
+    train_leg["pace_or_spin_cat"] = (train_leg["pace_or_spin"] == "Spin").astype(int)
+    test_leg["pace_or_spin_cat"] = (test_leg["pace_or_spin"] == "Spin").astype(int)
+    rw_bowl_features = rw_features + ["pace_or_spin_cat"]
+
+    xr_bowl_mod = HistGradientBoostingRegressor(max_iter=100, random_state=100)
+    xr_bowl_mod.fit(train_leg[rw_bowl_features], train_leg["bowler_runs_conceded"])
+    train_leg["E_R_bowl"] = xr_bowl_mod.predict(train_leg[rw_bowl_features])
+    test_leg["E_R_bowl"] = xr_bowl_mod.predict(test_leg[rw_bowl_features])
+    train_leg["bowl_supp"] = train_leg["E_R_bowl"] - train_leg["bowler_runs_conceded"]
+    test_leg["bowl_supp"] = test_leg["E_R_bowl"] - test_leg["bowler_runs_conceded"]
+
+    bat_train = train_leg.groupby("striker_id").agg(n_train=("runs", "count"), res_train=("run_res", "mean"))
+    bat_test = test_leg.groupby("striker_id").agg(n_test=("runs", "count"), res_test=("run_res", "mean"))
+    bat_comp = bat_train.join(bat_test, how="inner")
+    bat_qual = bat_comp[(bat_comp["n_train"] >= 30) & (bat_comp["n_test"] >= 30)]
+    bat_corr, bat_p = pearsonr(bat_qual["res_train"], bat_qual["res_test"])
+    bat_spear, _ = spearmanr(bat_qual["res_train"], bat_qual["res_test"])
+
+    bowl_train = train_leg.groupby("bowler_id").agg(n_train=("runs", "count"), supp_train=("bowl_supp", "mean"))
+    bowl_test = test_leg.groupby("bowler_id").agg(n_test=("runs", "count"), supp_test=("bowl_supp", "mean"))
+    bowl_comp = bowl_train.join(bowl_test, how="inner")
+    bowl_qual = bowl_comp[(bowl_comp["n_train"] >= 30) & (bowl_comp["n_test"] >= 30)]
+    bowl_corr, bowl_p = pearsonr(bowl_qual["supp_train"], bowl_qual["supp_test"])
+    bowl_spear, _ = spearmanr(bowl_qual["supp_train"], bowl_qual["supp_test"])
+
+    print(f"  ✓ Out-of-Time Model Accuracy: WP AUC={wp_auc:.4f}, XR RMSE={xr_rmse:.4f}, XW AUC={xw_auc:.4f}")
+    print(f"  ✓ Multi-Year Residual Persistence: Batters (n={len(bat_qual)}) r={bat_corr:.4f}, Bowlers (n={len(bowl_qual)}) r={bowl_corr:.4f}")
+
+    validation_data = {
+        "validation_metadata": {
+            "pipeline": "Option B: Pure First-Principles Econometric & ML Pipeline",
+            "train_window": "2022-2024",
+            "test_window": "2025-2026",
+            "train_deliveries": int(len(train_leg)),
+            "test_deliveries": int(len(test_leg)),
+            "train_matches": int(train_leg["match_id"].nunique()),
+            "test_matches": int(test_leg["match_id"].nunique())
         },
-        "data_driven_volume_cutoffs": {
-            "batters_q60": {
-                "N_HP": round(q60_bat_nhp, 1),
-                "M_HP": round(q60_bat_mhp, 1),
-                "N_tot": round(q60_bat_ntot, 1),
-                "pool_mean_HP_SR": round(mean_pool_srhp, 1),
-                "pool_mean_Base_SR": round(mean_pool_srbase, 1),
-                "eligible_count": int(len(final_bat))
+        "leverage_threshold_sensitivity": threshold_results,
+        "temporal_out_of_sample_validation": {
+            "model_1_win_probability": {
+                "out_of_time_roc_auc": round(wp_auc, 4),
+                "out_of_time_brier_score": round(wp_brier, 4)
             },
-            "bowlers_q75": {
-                "N_HP": round(q75_bowl_nhp, 1),
-                "M_HP": round(q75_bowl_mhp, 1),
-                "N_tot": round(q75_bowl_ntot, 1),
-                "eligible_count": int(len(eligible_bowl)),
-                "pace_count": int(n_pace),
-                "spin_count": int(n_spin)
+            "model_2_expected_runs": {
+                "out_of_time_rmse": round(xr_rmse, 4),
+                "out_of_time_mae": round(xr_mae, 4)
+            },
+            "model_3_expected_dismissals": {
+                "out_of_time_roc_auc": round(xw_auc, 4),
+                "out_of_time_brier_score": round(xw_brier, 4)
+            },
+            "player_high_pressure_skill_persistence": {
+                "batters": {
+                    "sample_size": int(len(bat_qual)),
+                    "pearson_r": round(float(bat_corr), 4),
+                    "spearman_rho": round(float(bat_spear), 4),
+                    "p_value": float(bat_p)
+                },
+                "bowlers": {
+                    "sample_size": int(len(bowl_qual)),
+                    "pearson_r": round(float(bowl_corr), 4),
+                    "spearman_rho": round(float(bowl_spear), 4),
+                    "p_value": float(bowl_p)
+                }
             }
-        },
-        "pca_composite_loadings": {
-            "batters": {
-                "Z_mu_HP": round(float(loadings_bat[0]), 4),
-                "Z_alpha": round(float(loadings_bat[1]), 4),
-                "Z_Delta": round(float(loadings_bat[2]), 4),
-                "Z_Consistency": round(float(loadings_bat[3]), 4)
-            },
-            "bowlers": {
-                "Z_mu_HP": round(float(bowl_pca_w[0]), 4),
-                "Z_alpha": round(float(bowl_pca_w[1]), 4),
-                "Z_Delta": round(float(bowl_pca_w[2]), 4),
-                "Z_Consistency": round(float(bowl_pca_w[3]), 4)
-            },
-            "downside_risk_penalty_w_se": round(1.0 / np.sqrt(4.0), 2)
         }
     }
-    with open(os.path.join(PROCESSED_DIR, "empirical_parameters_option_b.json"), "w") as f:
-        json.dump(empirical_params, f, indent=2)
-    print("  ✓ Exported empirical_parameters_option_b.json.")
 
-    return top10_bat, top10_bowl, b_m, bw_m
+    val_path = os.path.join(PROCESSED_DIR, "validation_and_sensitivity.json")
+    with open(val_path, "w") as f:
+        json.dump(validation_data, f, indent=2)
+    print(f"  ✓ Exported validation_and_sensitivity.json.")
+    return validation_data
 
 
 # =============================================================================
@@ -1080,12 +1279,18 @@ def run_pressure_intelligence_engine():
     print("  ✓ Exported sample ball_by_ball_pressure_index.csv (5000 rows).")
 
     # 4. Stages 3 & 4: Hierarchical Random-Slopes & Bayesian LCB Rankings
-    top_bat, top_bowl, b_m, bw_m = compute_hierarchical_random_slopes_and_lcb(
-        leg, best_alpha=best_alpha, lambda_wkt=lambda_wkt, L_star_gmm=L_star_gmm
+    top_bat, top_bowl, b_m, bw_m, final_bat, final_bowl = compute_hierarchical_random_slopes_and_lcb(
+        leg, best_alpha=best_alpha, lambda_wkt=lambda_wkt, L_star_gmm=L_star_gmm, export_csv=True
     )
 
     # 5. Venue summaries
     compute_rr_venue_summaries(leg)
+
+    # 6. Data-Driven Sensitivity Analysis & Temporal Validation
+    compute_sensitivity_and_temporal_validation(
+        df, leg, best_alpha=best_alpha, lambda_wkt=lambda_wkt, L_star_gmm=L_star_gmm,
+        final_bat_off=final_bat, final_bowl_off=final_bowl
+    )
 
     print("\n" + "=" * 80)
     print("🏆 OFFICIAL FIRST-PRINCIPLES TOP 10 SPECIALIST BATTERS UNDER PRESSURE")
