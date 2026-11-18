@@ -12,7 +12,7 @@ Our pure, self-governing **4-Stage Probabilistic & Econometric Machine Learning 
 
 ### Top 10 Batters Under Pressure (Unstop Ranks 1 to 10)
 
-| Unstop Rank | Player ID | Player Name | Total Balls | HP Balls ($L_i \ge L^*$) | HP Matches | Baseline SR | High-Pressure SR | Clutch Elevation ($\hat{\Delta}^{	ext{EB}}$) | Consistency % | 90% CI | $P(	ext{Top-10})$ | IPL % | PRR Score |
+| Unstop Rank | Player ID | Player Name | Total Balls | HP Balls ($L_i \ge L^*$) | HP Matches | Baseline SR | High-Pressure SR | Clutch Elevation ($\hat{\Delta}^{\text{EB}}$) | Consistency % | 90% CI | $P(\text{Top-10})$ | IPL % | PRR Score |
 |:-----------:|:---------:|:------------|:-----------:|:-------------------------:|:----------:|:-----------:|:----------------:|:-----------------------------------------------:|:-------------:|:------:|:------------------:|:-----:|:---------:|
 | **1** | `4260` | **Heinrich Klaasen** | 1,417 | 464 | 37 | 162.0 | **176.5** | +18.09 | 66.1% | [66.9, 100.0] | 80.0% | 85.6% | **99.24** |
 | **2** | `6396` | **Tim David** | 1,226 | 503 | 40 | 174.1 | **182.7** | +15.88 | 68.1% | [37.2, 100.0] | 32.2% | 54.9% | **99.19** |
@@ -25,11 +25,13 @@ Our pure, self-governing **4-Stage Probabilistic & Econometric Machine Learning 
 | **9** | `3647` | **Shreyas Iyer** | 1,865 | 684 | 46 | 153.0 | **153.4** | +10.23 | 60.7% | [63.8, 100.0] | 50.7% | 67.0% | **94.98** |
 | **10** | `6819` | **Yashasvi Jaiswal** | 1,872 | 685 | 43 | 153.7 | **161.0** | +14.62 | 70.0% | [62.2, 100.0] | 67.0% | 85.7% | **93.83** |
 
-> 📊 **[CHART: Batters Pressure Performance Frontier — High-Pressure SR vs. Baseline SR with Bubble Size = HP Deliveries]**
+![Top 10 Batters Pressure Performance & Bootstrap Confidence Intervals](assets/charts/chart1_batters_ci.png)
+
+<div style="page-break-before: always;"></div>
 
 ### Top 10 Bowlers Under Pressure (Unstop Ranks 1 to 10)
 
-| Unstop Rank | Player ID | Player Name | Role / Type | Total Balls | HP Balls ($L_i \ge L^*$) | HP Matches | Baseline Econ | High-Pressure Econ | Clutch Tightening ($\hat{\Delta}^{	ext{EB}}$) | Consistency % | 90% CI | $P(	ext{Top-10})$ | IPL % | PRR Score |
+| Unstop Rank | Player ID | Player Name | Role / Type | Total Balls | HP Balls ($L_i \ge L^*$) | HP Matches | Baseline Econ | High-Pressure Econ | Clutch Tightening ($\hat{\Delta}^{\text{EB}}$) | Consistency % | 90% CI | $P(\text{Top-10})$ | IPL % | PRR Score |
 |:-----------:|:---------:|:------------|:-----------:|:-----------:|:-------------------------:|:----------:|:-------------:|:------------------:|:--------------------------------------------------:|:-------------:|:------:|:------------------:|:-----:|:---------:|
 | **1** | `4722` | **Rashid Khan** | Spin | 2,747 | 826 | 75 | 7.39 | **7.20** | +12.58 | 65.4% | [51.5, 100.0] | 51.5% | 68.0% | **96.14** |
 | **2** | `830` | **Josh Hazlewood** | Pace | 1,479 | 579 | 47 | 8.34 | **7.75** | +13.05 | 69.6% | [61.0, 100.0] | 81.8% | 56.6% | **93.46** |
@@ -42,16 +44,16 @@ Our pure, self-governing **4-Stage Probabilistic & Econometric Machine Learning 
 | **9** | `7967` | **Noor Ahmad** | Spin | 1,472 | 525 | 38 | 7.65 | **7.61** | +12.75 | 61.4% | [30.3, 100.0] | 48.0% | 76.6% | **73.21** |
 | **10** | `8661` | **Matheesha Pathirana** | Pace | 1,141 | 424 | 28 | 7.68 | **8.02** | +8.74 | 61.8% | [20.8, 100.0] | 43.2% | 63.7% | **64.08** |
 
-> 📊 **[CHART: Bowlers Economy Suppression Frontier — High-Pressure Economy vs. Baseline Economy]**
+![Top 10 Bowlers Economy Suppression & Bootstrap Confidence Intervals](assets/charts/chart2_bowlers_ci.png)
 
----
+<div style="page-break-before: always;"></div>
 
 ## 🎯 2. IPL 2027 AUCTION ACTIONABILITY & ROSTER STRATEGY FOR RAJASTHAN ROYALS
 
 > **Context:** The official dataset contains no external contract or retention flags. While our models evaluate the full global pool with pure mathematical objectivity, we categorize the Top 10 (and Top 15 bubble) into an executive 3-tier auction actionability matrix for Rajasthan Royals:
 
 ### Tier 1: RR Retained Core Validation (Franchise Cornerstone)
-- **Yashasvi Jaiswal (#10 Batter, PRR 93.83):** Empirically confirms RR's marquee long-term retention. Jaiswal accelerates under pressure (**153.7 Base $	o$ 161.0 HP SR**, $\hat{\Delta} = +14.62$, **70.0% consistency**) while anchoring Jaipur spin-grip and Guwahati pace-friendly micro-climates.
+- **Yashasvi Jaiswal (#10 Batter, PRR 93.83):** Empirically confirms RR's marquee long-term retention. Jaiswal accelerates under pressure (**153.7 Base $\to$ 161.0 HP SR**, $\hat{\Delta} = +14.62$, **70.0% consistency**) while anchoring Jaipur spin-grip and Guwahati pace-friendly micro-climates.
 
 ### Tier 2: Prime IPL 2027 Auction / Trade Targets (High Availability)
 - **Pace Death Containment:** **Josh Hazlewood** (#2 Bowler, PRR **93.46**, **7.75** HP Econ), **Bhuvneshwar Kumar** (#3 Bowler, PRR **90.85**, **8.18** HP Econ), **Nathan Ellis** (#7 Bowler, PRR **83.20**, **7.73** HP Econ, $\hat{\Delta} = +25.34$), and **Lockie Ferguson** (#8 Bowler, PRR **73.60**) provide instant par suppression in Guwahati dew.
@@ -66,7 +68,7 @@ Our pure, self-governing **4-Stage Probabilistic & Econometric Machine Learning 
 
 ---
 
-## ⚙️ 3. THE 4-STEP ENGINE: PROCESS FLOW & 100% DATA-DRIVEN ESTIMATORS
+## ⚙️ 3. THE 4-STEP ENGINE: PROCESS FLOW & LEARNED PARAMETERS
 
 | Pipeline Stage | Mathematical Technique | Learned Parameter Value | Purpose & Cricket Grounding |
 |:---------------|:-----------------------|:-----------------------:|:----------------------------|
@@ -75,7 +77,20 @@ Our pure, self-governing **4-Stage Probabilistic & Econometric Machine Learning 
 | **3. ANOVA Empirical Bayes & OLS** | One-Way Random Effects ANOVA variance decomposition + De-attenuated OLS on true means | **$K_{\text{bat}} = 222.6$**, **$K_{\text{bowl}} = 500.0$**, **$\hat{\rho}_{\text{bat}} = 0.2000$**, **$\hat{\rho}_{\text{bowl}} = 0.3969$** | Cures measurement error attenuation; resolves Lord's Paradox; shrinks noisy small samples to population par. |
 | **4. Par Eligibility & PCA PRR Score** | High-pressure par hurdle gates + Principal Component Analysis on 4 orthogonal performance pillars | **$Q_{60}$ Batters** ($N_{\text{HP}} \ge 238$), **$Q_{75}$ Bowlers** ($N_{\text{HP}} \ge 317$), PCA weights $\to \Phi(Z) \times 100$ | Eliminates manual weights; synthesizes clutch elevation, par suppression, match consistency & downside risk. |
 
-> 📊 **[CHART: GMM Bimodal Leverage Distribution & $L^*$ Crossover Threshold ($L_i \ge 0.9927$)]**
+<div style="page-break-before: always;"></div>
+
+### Design & Parameter Choices: Why We Chose Them & What Difference They Make
+
+| Parameter / Choice | Learned / Set Value | Why We Chose It | What Difference It Makes (Practical Impact) |
+|:---|:---|:---|:---|
+| **Pressure Cutoff ($L^*_{\text{GMM}}$)** | `0.9927` (2-Comp GMM) | Replaces subjective "Overs 16–20" rules with natural crunch-ball clustering | Captures early collapses & filters dead chases (**8.36x** chase WP swing; naive phase rule misses 5/10 batters & bowlers) |
+| **Wicket Valuation ($C_{\text{wkt}}, \lambda_{\text{wkt}}$)** | Mean `4.55` runs, $\lambda=1.3176$ | ML Remaining-Runs model prices wickets by exact game state instead of a flat penalty | Values early top-order breakthroughs far above cheap tail-end wickets in Over 20 |
+| **Opponent Ridge Penalty ($\alpha^*$)** | `500.0` (5-Fold GroupKFold CV) | Simultaneously adjusts every ball for opposition batter/bowler quality | Eliminates weak bilateral/Associate inflation (removing Associate games keeps **$\rho = 0.995$** & 10/10 batters) |
+| **Empirical Bayes Shrinkage ($K$)** | Bat `222.55`, Bowl `500.0` (ANOVA) | Measures exact ratio of within-player noise to between-player skill | Prevents 3-match flukes from topping the table; rewards multi-season durability |
+| **De-Attenuated OLS Slope ($\hat{\rho}$)** | Bat `0.2000`, Bowl `0.3969` | Removes errors-in-variables attenuation when comparing pressure vs. baseline | Cures Lord's Paradox—stops penalizing elite baselines (Bumrah `6.41`, SKY `166.3`) and filters out SR-collapsers |
+| **Dual Par & Volume Gates** | Local + Global Par; $Q_{60}$ / $Q_{75}$ | Benchmarks against both match par & specialist pool with role-fair volume floors | Removes 0%-IPL/low-sample artifacts; produces a balanced **6 Pace / 4 Spin** bowling top 10 |
+| **PCA(1) Weights & Risk Penalty** | Data-learned loadings, $-0.50 \cdot Z(\text{SE})$ | Removes arbitrary manual weights across impact, baseline, elevation & consistency | Objectively weights maximum-variance signal while penalizing erratic match-to-match swings |
+| **Full-Pool Z-Standardization** | Active specialist $\mu, \sigma$ | Standardizes PRR against all active specialists before slicing the Top 10 | Produces true population percentiles (`93.8–99.2` PRR) instead of artificial `<50` scores |
 
 ---
 
@@ -112,6 +127,10 @@ Empirical match dynamics measured across Role $\times$ Innings $\times$ Leverage
 
 > **Mathematical Proof:** A High-Pressure delivery swings match probability by **3.06x in the 1st innings** and an overwhelming **8.36x in the chase** relative to ordinary balls, confirming $L^* = 0.9927$ captures authentic game-deciding moments.
 
+<div style="page-break-before: always;"></div>
+
+![Post-Hoc Regime Validation & 8-Way Methodological Ablation Overlap](assets/charts/chart3_regime_and_ablation.png)
+
 ### C. Data Engineering Hygiene & 3-Tier Competitive Scoring Environments
 - **Delivery Counter Reconciliation:** Ingested **200,999 raw records** across 867 matches; filtered **7,714 wides** to yield **193,285 true legal deliveries**, resolving the raw `innings_ball_num` wide-increment discrepancy.
 - **3-Way Run Accounting:** Reconstructed **283,903 runs** partitioned into Batter Runs (269,550), Bowler Extras (9,750), and Fielding Extras (4,603). Bowler dismissals cleanly decouple non-bowler wickets (`run out`, `retired out`).
@@ -135,9 +154,9 @@ To guard against data leakage, all expectation models were trained strictly on *
 - **Multi-Year Skill Persistence:** Inter-season correlation across active players confirms high-pressure reliability is a repeatable talent: Batters **$r = 0.3758$** ($p < 0.0001$), Bowlers **$r = 0.3130$** ($p < 0.0001$).
 - **Out-of-Time Cohort Lift (2025–2026 Test Period):** Top 10 Batters delivered **161.4 HP SR** vs. pool average 144.8 (**+16.6 pts lift**); Top 10 Bowlers held **7.95 HP Econ** vs. pool average 8.88 (**-0.93 RPO suppression**).
 
-> 📊 **[CHART: Multi-Year Player Skill Persistence & Stability Across Seasons (2022–2026)]**
+![Season-by-Season High-Pressure Net Value Consistency Heatmap (2022–2026)](assets/charts/chart4_season_heatmap.png)
 
----
+<div style="page-break-before: always;"></div>
 
 ## 📋 5. APPENDIX: BUBBLE CONTENDERS (RANKS 11–20) & 2026 ACTIVE SCREEN
 

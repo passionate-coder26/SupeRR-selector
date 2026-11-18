@@ -1,10 +1,12 @@
 """
 Export SUBMISSION_RANKINGS_AND_REPORT.md to Publication-Quality PDF
-with full LaTeX math rendering via MathJax v3 and print-fitted tables.
+with full LaTeX math rendering via MathJax v3, base64-embedded charts,
+and print-fitted tables.
 """
 
 import os
 import re
+import base64
 import shutil
 import subprocess
 import sys
@@ -69,9 +71,38 @@ def convert_markdown_with_math_protection(md_text):
     return html_body
 
 
+def embed_images_as_base64(html_body):
+    """
+    Finds all <img src="..."> in the HTML and replaces local file paths with base64 data URIs
+    so headless browsers render them reliably with zero file-access or CORS friction.
+    """
+    def replacer(match):
+        full_tag = match.group(0)
+        src_match = re.search(r'src=["\']([^"\']+)["\']', full_tag)
+        if not src_match:
+            return full_tag
+        src = src_match.group(1)
+        if src.startswith("data:") or src.startswith("http://") or src.startswith("https://"):
+            return full_tag
+
+        # Resolve path relative to PROJECT_ROOT or current working directory
+        local_path = os.path.join(PROJECT_ROOT, src.replace("/", os.sep))
+        if not os.path.exists(local_path):
+            local_path = os.path.abspath(src)
+
+        if os.path.exists(local_path):
+            ext = os.path.splitext(local_path)[1].lower().replace(".", "")
+            mime = "image/png" if ext == "png" else ("image/jpeg" if ext in ["jpg", "jpeg"] else f"image/{ext}")
+            with open(local_path, "rb") as f:
+                b64_data = base64.b64encode(f.read()).decode("utf-8")
+            return full_tag.replace(f'src="{src}"', f'src="data:{mime};base64,{b64_data}"').replace(f"src='{src}'", f'src="data:{mime};base64,{b64_data}"')
+        return full_tag
+
+    return re.sub(r'<img [^>]+>', replacer, html_body)
+
+
 def build_complete_html(html_body):
     """Wraps body in an A4 print-optimized template with Rajasthan Royals branding and MathJax v3."""
-    # Read local MathJax script if available for fast offline rendering
     local_mathjax_script = ""
     if os.path.exists(LOCAL_MATHJAX):
         with open(LOCAL_MATHJAX, "r", encoding="utf-8") as f:
@@ -113,7 +144,7 @@ def build_complete_html(html_body):
   <style>
     @page {{
       size: A4 portrait;
-      margin: 12mm 12mm 12mm 12mm;
+      margin: 9mm 11mm 9mm 11mm;
       @bottom-right {{
         content: counter(page);
         font-size: 8pt;
@@ -129,59 +160,59 @@ def build_complete_html(html_body):
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
       color: #0F172A;
       background-color: #FFFFFF;
-      line-height: 1.45;
-      font-size: 9.5pt;
+      line-height: 1.40;
+      font-size: 9.0pt;
       margin: 0;
       padding: 0;
     }}
 
     h1 {{
       color: #070E22;
-      font-size: 18pt;
+      font-size: 16pt;
       font-weight: 800;
-      border-bottom: 3px solid #EA1A85;
-      padding-bottom: 6px;
+      border-bottom: 2.5px solid #EA1A85;
+      padding-bottom: 5px;
       margin-top: 0;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }}
 
     h2 {{
       color: #070E22;
-      font-size: 13.5pt;
+      font-size: 12pt;
       font-weight: 700;
       border-bottom: 1.5px solid #EA1A85;
-      padding-bottom: 4px;
-      margin-top: 20px;
-      margin-bottom: 8px;
-      page-break-after: avoid;
-    }}
-
-    h3 {{
-      color: #070E22;
-      font-size: 11pt;
-      font-weight: 700;
+      padding-bottom: 3px;
       margin-top: 14px;
       margin-bottom: 6px;
       page-break-after: avoid;
     }}
 
-    h4 {{
+    h3 {{
       color: #070E22;
       font-size: 10pt;
-      font-weight: 600;
+      font-weight: 700;
       margin-top: 10px;
       margin-bottom: 4px;
       page-break-after: avoid;
     }}
 
+    h4 {{
+      color: #070E22;
+      font-size: 9pt;
+      font-weight: 600;
+      margin-top: 8px;
+      margin-bottom: 3px;
+      page-break-after: avoid;
+    }}
+
     p {{
-      margin: 6px 0;
+      margin: 4px 0;
     }}
 
     hr {{
       border: 0;
       border-top: 1px solid #E2E8F0;
-      margin: 14px 0;
+      margin: 10px 0;
     }}
 
     /* Print-fitted Tables */
@@ -190,8 +221,8 @@ def build_complete_html(html_body):
       max-width: 100% !important;
       table-layout: auto !important;
       border-collapse: collapse;
-      margin: 10px 0;
-      font-size: 8.2pt;
+      margin: 4px 0 6px 0;
+      font-size: 7.4pt;
       page-break-inside: avoid;
       word-wrap: break-word;
     }}
@@ -201,10 +232,10 @@ def build_complete_html(html_body):
       color: #FFFFFF !important;
       border: 1px solid #1E293B;
       border-bottom: 2px solid #EA1A85 !important;
-      padding: 4px 5px;
+      padding: 2.8px 3.8px;
       text-align: center;
       font-weight: 700;
-      font-size: 8pt;
+      font-size: 7.2pt;
       vertical-align: middle;
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
@@ -212,9 +243,9 @@ def build_complete_html(html_body):
 
     td {{
       border: 1px solid #CBD5E1;
-      padding: 3.5px 5px;
+      padding: 2.2px 3.8px;
       vertical-align: middle;
-      font-size: 7.8pt;
+      font-size: 7.0pt;
       text-align: left;
     }}
 
@@ -228,12 +259,26 @@ def build_complete_html(html_body):
       print-color-adjust: exact;
     }}
 
+    /* Publication-Grade Chart Images */
+    img {{
+      display: block;
+      max-width: 98%;
+      max-height: 220px;
+      object-fit: contain;
+      margin: 4px auto 6px auto;
+      page-break-inside: avoid;
+      border-radius: 4px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }}
+
     blockquote {{
       background-color: #F8FAFC;
       border-left: 3.5px solid #EA1A85;
-      padding: 6px 12px;
-      margin: 8px 0;
-      font-size: 8.8pt;
+      padding: 5px 10px;
+      margin: 6px 0;
+      font-size: 8.4pt;
       color: #334155;
       page-break-inside: avoid;
       -webkit-print-color-adjust: exact;
@@ -243,19 +288,19 @@ def build_complete_html(html_body):
     code {{
       background-color: #F1F5F9;
       color: #EA1A85;
-      padding: 1px 3.5px;
+      padding: 1px 3px;
       border-radius: 3px;
-      font-size: 8pt;
+      font-size: 7.8pt;
       font-family: Consolas, "Courier New", monospace;
     }}
 
     pre {{
       background-color: #0F172A;
       color: #F8FAFC;
-      padding: 8px 12px;
-      border-radius: 6px;
+      padding: 6px 10px;
+      border-radius: 5px;
       overflow-x: auto;
-      font-size: 8pt;
+      font-size: 7.8pt;
       page-break-inside: avoid;
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
@@ -268,7 +313,7 @@ def build_complete_html(html_body):
     }}
 
     ul, ol {{
-      margin: 5px 0 8px 18px;
+      margin: 4px 0 6px 16px;
       padding: 0;
     }}
 
@@ -283,8 +328,8 @@ def build_complete_html(html_body):
     }}
 
     mjx-container[jax="CHTML"][display="true"] {{
-      margin: 8px 0 !important;
-      font-size: 105% !important;
+      margin: 6px 0 !important;
+      font-size: 102% !important;
     }}
   </style>
 </head>
@@ -312,7 +357,10 @@ def export_pdf():
     print("2. Protecting LaTeX equations and converting Markdown to HTML...")
     html_body = convert_markdown_with_math_protection(md_content)
 
-    print("3. Wrapping HTML with print stylesheet and MathJax configuration...")
+    print("3. Converting local chart images to embedded Base64 data URIs...")
+    html_body = embed_images_as_base64(html_body)
+
+    print("4. Wrapping HTML with print stylesheet and MathJax configuration...")
     full_html = build_complete_html(html_body)
 
     os.makedirs(os.path.dirname(HTML_PATH), exist_ok=True)
@@ -325,8 +373,7 @@ def export_pdf():
         print("❌ Error: Microsoft Edge or Chrome executable not found in PATH or standard directories.")
         sys.exit(1)
 
-    print(f"4. Rendering PDF via Headless Browser: {browser_bin}...")
-    # Convert file path to file URL
+    print(f"5. Rendering PDF via Headless Browser: {browser_bin}...")
     html_file_url = "file:///" + HTML_PATH.replace("\\", "/")
 
     temp_profile = os.path.join(os.environ.get("TEMP", "C:\\Temp"), "edge_pdf_profile")
@@ -341,7 +388,7 @@ def export_pdf():
         f"--user-data-dir={temp_profile}",
         "--no-pdf-header-footer",
         "--run-all-compositor-stages-before-draw",
-        "--virtual-time-budget=8000",
+        "--virtual-time-budget=9000",
         f'--print-to-pdf={PDF_PATH}',
         html_file_url
     ]

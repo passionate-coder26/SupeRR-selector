@@ -51,11 +51,13 @@ COLOR_MUTED = RGBColor(148, 163, 184)
 
 
 def generate_markdown_report(top_bat, top_bowl, ml_metrics, feat_df, emp_params, top_bat_opt_a=None, top_bowl_opt_a=None, val_sens_data=None):
-    """Generate the ultra-compact, visual Executive Briefing report (~4-5 pages print-optimized)."""
-    print("📝 Generating ultra-compact SUBMISSION_RANKINGS_AND_REPORT.md...")
+    """Generate the ultra-compact, visual Executive Briefing report (~6-7 pages with embedded publication charts)."""
+    print("📝 Generating publication-grade SUBMISSION_RANKINGS_AND_REPORT.md...")
     lines = []
 
-    # Title & Metadata Banner
+    # =========================================================================
+    # PAGE 1: TITLE BANNER, EXECUTIVE SUMMARY & TOP 10 BATTERS
+    # =========================================================================
     lines.append("# 🏏 Rajasthan Royals SupeRR Selector Season 2 — Round 1 Methodology Briefing")
     lines.append("## Identifying the Most Reliable Players Under Pressure in T20 Cricket (2022–2026)")
     lines.append(f"**Submission Date:** {datetime.now().strftime('%B %d, %Y')} | **Platform:** The Pink Canvas OS | **Deliverables:** Streamlit App & Publication-Grade PDF")
@@ -65,14 +67,13 @@ def generate_markdown_report(top_bat, top_bowl, ml_metrics, feat_df, emp_params,
     lines.append("---")
     lines.append("")
 
-    # Section 1: Executive Summary & Official Top 10 Rankings
     lines.append("## 🏆 1. EXECUTIVE SUMMARY: OFFICIAL TOP 10 RANKINGS")
     lines.append("")
     lines.append("Our pure, self-governing **4-Stage Probabilistic & Econometric Machine Learning Pipeline** eliminates all manual thresholds, arbitrary weights, and fixed penalties. Every parameter is learned directly from the 200,999 deliveries:")
     lines.append("")
     lines.append("### Top 10 Batters Under Pressure (Unstop Ranks 1 to 10)")
     lines.append("")
-    lines.append("| Unstop Rank | Player ID | Player Name | Total Balls | HP Balls ($L_i \ge L^*$) | HP Matches | Baseline SR | High-Pressure SR | Clutch Elevation ($\hat{\Delta}^{\text{EB}}$) | Consistency % | 90% CI | $P(\text{Top-10})$ | IPL % | PRR Score |")
+    lines.append("| Unstop Rank | Player ID | Player Name | Total Balls | HP Balls ($L_i \\ge L^*$) | HP Matches | Baseline SR | High-Pressure SR | Clutch Elevation ($\\hat{\\Delta}^{\\text{EB}}$) | Consistency % | 90% CI | $P(\\text{Top-10})$ | IPL % | PRR Score |")
     lines.append("|:-----------:|:---------:|:------------|:-----------:|:-------------------------:|:----------:|:-----------:|:----------------:|:-----------------------------------------------:|:-------------:|:------:|:------------------:|:-----:|:---------:|")
     for _, r in top_bat.head(10).iterrows():
         p_name = r.get("player_name", r.get("striker_name"))
@@ -83,11 +84,17 @@ def generate_markdown_report(top_bat, top_bowl, ml_metrics, feat_df, emp_params,
         ipl_share = f"{r['IPL_HP_Share_Pct']:.1f}%" if "IPL_HP_Share_Pct" in r else "-"
         lines.append(f"| **{int(r['Rank'])}** | `{p_id}` | **{p_name}** | {int(r['total_balls']):,} | {int(r['HP_Deliveries']):,} | {int(r['M_HP'])} | {r['Base_SR']:.1f} | **{r['HP_SR']:.1f}** | {delta_val:+.2f} | {r['Consistency_Pct']:.1f}% | {ci_str} | {p_top10} | {ipl_share} | **{r['PRR_Score']:.2f}** |")
     lines.append("")
-    lines.append("> 📊 **[CHART: Batters Pressure Performance Frontier — High-Pressure SR vs. Baseline SR with Bubble Size = HP Deliveries]**")
+    lines.append("![Top 10 Batters Pressure Performance & Bootstrap Confidence Intervals](assets/charts/chart1_batters_ci.png)")
+    lines.append("")
+
+    # =========================================================================
+    # PAGE 2: TOP 10 BOWLERS UNDER PRESSURE
+    # =========================================================================
+    lines.append("<div style=\"page-break-before: always;\"></div>")
     lines.append("")
     lines.append("### Top 10 Bowlers Under Pressure (Unstop Ranks 1 to 10)")
     lines.append("")
-    lines.append("| Unstop Rank | Player ID | Player Name | Role / Type | Total Balls | HP Balls ($L_i \ge L^*$) | HP Matches | Baseline Econ | High-Pressure Econ | Clutch Tightening ($\hat{\Delta}^{\text{EB}}$) | Consistency % | 90% CI | $P(\text{Top-10})$ | IPL % | PRR Score |")
+    lines.append("| Unstop Rank | Player ID | Player Name | Role / Type | Total Balls | HP Balls ($L_i \\ge L^*$) | HP Matches | Baseline Econ | High-Pressure Econ | Clutch Tightening ($\\hat{\\Delta}^{\\text{EB}}$) | Consistency % | 90% CI | $P(\\text{Top-10})$ | IPL % | PRR Score |")
     lines.append("|:-----------:|:---------:|:------------|:-----------:|:-----------:|:-------------------------:|:----------:|:-------------:|:------------------:|:--------------------------------------------------:|:-------------:|:------:|:------------------:|:-----:|:---------:|")
     for _, r in top_bowl.head(10).iterrows():
         p_name = r.get("player_name", r.get("bowler_name"))
@@ -99,21 +106,23 @@ def generate_markdown_report(top_bat, top_bowl, ml_metrics, feat_df, emp_params,
         ipl_share = f"{r['IPL_HP_Share_Pct']:.1f}%" if "IPL_HP_Share_Pct" in r else "-"
         lines.append(f"| **{int(r['Rank'])}** | `{p_id}` | **{p_name}** | {role_type} | {int(r['total_balls']):,} | {int(r['HP_Deliveries']):,} | {int(r['M_HP'])} | {r['Base_Economy']:.2f} | **{r['HP_Economy']:.2f}** | {delta_val:+.2f} | {r['Consistency_Pct']:.1f}% | {ci_str} | {p_top10} | {ipl_share} | **{r['PRR_Score']:.2f}** |")
     lines.append("")
-    lines.append("> 📊 **[CHART: Bowlers Economy Suppression Frontier — High-Pressure Economy vs. Baseline Economy]**")
-    lines.append("")
-    lines.append("---")
+    lines.append("![Top 10 Bowlers Economy Suppression & Bootstrap Confidence Intervals](assets/charts/chart2_bowlers_ci.png)")
     lines.append("")
 
-    # Section 2: IPL 2027 Auction Actionability & Roster Strategy
+    # =========================================================================
+    # PAGE 3: RAJASTHAN ROYALS 2027 AUCTION STRATEGY & 4-STEP ENGINE FLOW
+    # =========================================================================
+    lines.append("<div style=\"page-break-before: always;\"></div>")
+    lines.append("")
     lines.append("## 🎯 2. IPL 2027 AUCTION ACTIONABILITY & ROSTER STRATEGY FOR RAJASTHAN ROYALS")
     lines.append("")
     lines.append("> **Context:** The official dataset contains no external contract or retention flags. While our models evaluate the full global pool with pure mathematical objectivity, we categorize the Top 10 (and Top 15 bubble) into an executive 3-tier auction actionability matrix for Rajasthan Royals:")
     lines.append("")
     lines.append("### Tier 1: RR Retained Core Validation (Franchise Cornerstone)")
-    lines.append("- **Yashasvi Jaiswal (#10 Batter, PRR 93.83):** Empirically confirms RR's marquee long-term retention. Jaiswal accelerates under pressure (**153.7 Base $\to$ 161.0 HP SR**, $\hat{\Delta} = +14.62$, **70.0% consistency**) while anchoring Jaipur spin-grip and Guwahati pace-friendly micro-climates.")
+    lines.append("- **Yashasvi Jaiswal (#10 Batter, PRR 93.83):** Empirically confirms RR's marquee long-term retention. Jaiswal accelerates under pressure (**153.7 Base $\\to$ 161.0 HP SR**, $\\hat{\\Delta} = +14.62$, **70.0% consistency**) while anchoring Jaipur spin-grip and Guwahati pace-friendly micro-climates.")
     lines.append("")
     lines.append("### Tier 2: Prime IPL 2027 Auction / Trade Targets (High Availability)")
-    lines.append("- **Pace Death Containment:** **Josh Hazlewood** (#2 Bowler, PRR **93.46**, **7.75** HP Econ), **Bhuvneshwar Kumar** (#3 Bowler, PRR **90.85**, **8.18** HP Econ), **Nathan Ellis** (#7 Bowler, PRR **83.20**, **7.73** HP Econ, $\hat{\Delta} = +25.34$), and **Lockie Ferguson** (#8 Bowler, PRR **73.60**) provide instant par suppression in Guwahati dew.")
+    lines.append("- **Pace Death Containment:** **Josh Hazlewood** (#2 Bowler, PRR **93.46**, **7.75** HP Econ), **Bhuvneshwar Kumar** (#3 Bowler, PRR **90.85**, **8.18** HP Econ), **Nathan Ellis** (#7 Bowler, PRR **83.20**, **7.73** HP Econ, $\\hat{\\Delta} = +25.34$), and **Lockie Ferguson** (#8 Bowler, PRR **73.60**) provide instant par suppression in Guwahati dew.")
     lines.append("- **Jaipur Spin Fortress:** **Noor Ahmad** (#9 Bowler, PRR **73.21**, **7.61** HP Econ) pairs seamlessly with Jaipur's large 78m square boundaries.")
     lines.append("- **Clutch Chase Finishers:** **Glenn Maxwell** (#7 Batter, PRR **96.26**, **168.5** HP SR) and **David Miller** (#8 Batter, PRR **95.54**, **159.6** HP SR) solve high-leverage middle/death run-chases at accessible auction pricing.")
     lines.append("- **Top-15 Bubble Contingencies:** **Mitchell Marsh** (#14, PRR **91.86**), **Daryl Mitchell** (#15, PRR **90.63**), **Mustafizur Rahman**, and **Wanindu Hasaranga**.")
@@ -126,8 +135,7 @@ def generate_markdown_report(top_bat, top_bowl, ml_metrics, feat_df, emp_params,
     lines.append("---")
     lines.append("")
 
-    # Section 3: Visual-First Methodology (The 4-Step Engine Process Flow)
-    lines.append("## ⚙️ 3. THE 4-STEP ENGINE: PROCESS FLOW & 100% DATA-DRIVEN ESTIMATORS")
+    lines.append("## ⚙️ 3. THE 4-STEP ENGINE: PROCESS FLOW & LEARNED PARAMETERS")
     lines.append("")
     l_star = emp_params.get('leverage_gmm_crossover_threshold', 0.9927)
     hp_pct = emp_params.get('high_pressure_share_pct', 36.67)
@@ -148,12 +156,28 @@ def generate_markdown_report(top_bat, top_bowl, ml_metrics, feat_df, emp_params,
     lines.append(f"| **3. ANOVA Empirical Bayes & OLS** | One-Way Random Effects ANOVA variance decomposition + De-attenuated OLS on true means | **$K_{{\\text{{bat}}}} = {k_b_hp:.1f}$**, **$K_{{\\text{{bowl}}}} = {k_bw_hp:.1f}$**, **$\\hat{{\\rho}}_{{\\text{{bat}}}} = {r_bat:.4f}$**, **$\\hat{{\\rho}}_{{\\text{{bowl}}}} = {r_bowl:.4f}$** | Cures measurement error attenuation; resolves Lord's Paradox; shrinks noisy small samples to population par. |")
     lines.append(f"| **4. Par Eligibility & PCA PRR Score** | High-pressure par hurdle gates + Principal Component Analysis on 4 orthogonal performance pillars | **$Q_{{60}}$ Batters** ($N_{{\\text{{HP}}}} \\ge 238$), **$Q_{{75}}$ Bowlers** ($N_{{\\text{{HP}}}} \\ge 317$), PCA weights $\\to \\Phi(Z) \\times 100$ | Eliminates manual weights; synthesizes clutch elevation, par suppression, match consistency & downside risk. |")
     lines.append("")
-    lines.append("> 📊 **[CHART: GMM Bimodal Leverage Distribution & $L^*$ Crossover Threshold ($L_i \ge 0.9927$)]**")
+
+    # =========================================================================
+    # PAGE 4: PARAMETER CHOICES & SENSITIVITY BENCHMARKS
+    # =========================================================================
+    lines.append("<div style=\"page-break-before: always;\"></div>")
+    lines.append("")
+    lines.append("### Design & Parameter Choices: Why We Chose Them & What Difference They Make")
+    lines.append("")
+    lines.append("| Parameter / Choice | Learned / Set Value | Why We Chose It | What Difference It Makes (Practical Impact) |")
+    lines.append("|:---|:---|:---|:---|")
+    lines.append("| **Pressure Cutoff ($L^*_{\\text{GMM}}$)** | `0.9927` (2-Comp GMM) | Replaces subjective \"Overs 16–20\" rules with natural crunch-ball clustering | Captures early collapses & filters dead chases (**8.36x** chase WP swing; naive phase rule misses 5/10 batters & bowlers) |")
+    lines.append("| **Wicket Valuation ($C_{\\text{wkt}}, \\lambda_{\\text{wkt}}$)** | Mean `4.55` runs, $\\lambda=1.3176$ | ML Remaining-Runs model prices wickets by exact game state instead of a flat penalty | Values early top-order breakthroughs far above cheap tail-end wickets in Over 20 |")
+    lines.append("| **Opponent Ridge Penalty ($\\alpha^*$)** | `500.0` (5-Fold GroupKFold CV) | Simultaneously adjusts every ball for opposition batter/bowler quality | Eliminates weak bilateral/Associate inflation (removing Associate games keeps **$\\rho = 0.995$** & 10/10 batters) |")
+    lines.append("| **Empirical Bayes Shrinkage ($K$)** | Bat `222.55`, Bowl `500.0` (ANOVA) | Measures exact ratio of within-player noise to between-player skill | Prevents 3-match flukes from topping the table; rewards multi-season durability |")
+    lines.append("| **De-Attenuated OLS Slope ($\\hat{\\rho}$)** | Bat `0.2000`, Bowl `0.3969` | Removes errors-in-variables attenuation when comparing pressure vs. baseline | Cures Lord's Paradox—stops penalizing elite baselines (Bumrah `6.41`, SKY `166.3`) and filters out SR-collapsers |")
+    lines.append("| **Dual Par & Volume Gates** | Local + Global Par; $Q_{60}$ / $Q_{75}$ | Benchmarks against both match par & specialist pool with role-fair volume floors | Removes 0%-IPL/low-sample artifacts; produces a balanced **6 Pace / 4 Spin** bowling top 10 |")
+    lines.append("| **PCA(1) Weights & Risk Penalty** | Data-learned loadings, $-0.50 \\cdot Z(\\text{SE})$ | Removes arbitrary manual weights across impact, baseline, elevation & consistency | Objectively weights maximum-variance signal while penalizing erratic match-to-match swings |")
+    lines.append("| **Full-Pool Z-Standardization** | Active specialist $\\mu, \\sigma$ | Standardizes PRR against all active specialists before slicing the Top 10 | Produces true population percentiles (`93.8–99.2` PRR) instead of artificial `<50` scores |")
     lines.append("")
     lines.append("---")
     lines.append("")
 
-    # Section 4: Empirical Validation, Sensitivity & Forensic Audit
     lines.append("## 🔬 4. EMPIRICAL VALIDATION, SENSITIVITY & FORENSIC AUDIT")
     lines.append("")
     lines.append("### A. 8-Way Methodological Ablation & Baseline Benchmark Table")
@@ -173,7 +197,6 @@ def generate_markdown_report(top_bat, top_bowl, ml_metrics, feat_df, emp_params,
     lines.append("> - **Failure of Naive Death Overs & Raw Stats:** An arbitrary Overs 16–20 rule collapses rank correlation to **$\\rho = 0.3810$** (batters) and **$\\rho = 0.5604$** (bowlers); raw unadjusted stats produce **0/10 bowler overlap**.")
     lines.append("")
 
-    # Post-Hoc Regime Validation (2x2x2)
     lines.append("### B. Post-Hoc Regime Validation: Live Win Probability Swing Multipliers")
     lines.append("Empirical match dynamics measured across Role $\\times$ Innings $\\times$ Leverage Regime independently prove GMM separation:")
     lines.append("")
@@ -187,7 +210,13 @@ def generate_markdown_report(top_bat, top_bowl, ml_metrics, feat_df, emp_params,
     lines.append("> **Mathematical Proof:** A High-Pressure delivery swings match probability by **3.06x in the 1st innings** and an overwhelming **8.36x in the chase** relative to ordinary balls, confirming $L^* = 0.9927$ captures authentic game-deciding moments.")
     lines.append("")
 
-    # Data Engineering Hygiene Audit & 3 Environments
+    # =========================================================================
+    # PAGE 5: DATA HYGIENE, TEMPORAL VALIDATION & MULTI-YEAR HEATMAP
+    # =========================================================================
+    lines.append("<div style=\"page-break-before: always;\"></div>")
+    lines.append("")
+    lines.append("![Post-Hoc Regime Validation & 8-Way Methodological Ablation Overlap](assets/charts/chart3_regime_and_ablation.png)")
+    lines.append("")
     lines.append("### C. Data Engineering Hygiene & 3-Tier Competitive Scoring Environments")
     lines.append("- **Delivery Counter Reconciliation:** Ingested **200,999 raw records** across 867 matches; filtered **7,714 wides** to yield **193,285 true legal deliveries**, resolving the raw `innings_ball_num` wide-increment discrepancy.")
     lines.append("- **3-Way Run Accounting:** Reconstructed **283,903 runs** partitioned into Batter Runs (269,550), Bowler Extras (9,750), and Fielding Extras (4,603). Bowler dismissals cleanly decouple non-bowler wickets (`run out`, `retired out`).")
@@ -200,7 +229,6 @@ def generate_markdown_report(top_bat, top_bowl, ml_metrics, feat_df, emp_params,
     lines.append("| **IPL (Indian Premier League)** | 371 | 81,646 | 185.02 runs | 9.25 RPO | Ultra-high scoring franchise benchmark; deep power-hitting batting orders. |")
     lines.append("")
 
-    # Temporal Out-of-Sample Validation & Multi-Year Skill Persistence
     lines.append("### D. Temporal Out-of-Sample Validation (2022–2024 Train vs. 2025–2026 Test)")
     lines.append("To guard against data leakage, all expectation models were trained strictly on **2022–2024 (115,738 legal balls, 512 matches)** and evaluated out-of-time on **2025–2026 (77,547 legal balls, 355 matches)**:")
     lines.append("")
@@ -213,12 +241,14 @@ def generate_markdown_report(top_bat, top_bowl, ml_metrics, feat_df, emp_params,
     lines.append("- **Multi-Year Skill Persistence:** Inter-season correlation across active players confirms high-pressure reliability is a repeatable talent: Batters **$r = 0.3758$** ($p < 0.0001$), Bowlers **$r = 0.3130$** ($p < 0.0001$).")
     lines.append("- **Out-of-Time Cohort Lift (2025–2026 Test Period):** Top 10 Batters delivered **161.4 HP SR** vs. pool average 144.8 (**+16.6 pts lift**); Top 10 Bowlers held **7.95 HP Econ** vs. pool average 8.88 (**-0.93 RPO suppression**).")
     lines.append("")
-    lines.append("> 📊 **[CHART: Multi-Year Player Skill Persistence & Stability Across Seasons (2022–2026)]**")
-    lines.append("")
-    lines.append("---")
+    lines.append("![Season-by-Season High-Pressure Net Value Consistency Heatmap (2022–2026)](assets/charts/chart4_season_heatmap.png)")
     lines.append("")
 
-    # Section 5: Appendix: Bubble Contenders (Ranks 11-20)
+    # =========================================================================
+    # PAGE 6: BUBBLE CONTENDERS (RANKS 11-20) & 2026 ACTIVE SCREEN AUDIT
+    # =========================================================================
+    lines.append("<div style=\"page-break-before: always;\"></div>")
+    lines.append("")
     lines.append("## 📋 5. APPENDIX: BUBBLE CONTENDERS (RANKS 11–20) & 2026 ACTIVE SCREEN")
     lines.append("")
     lines.append("| Category | Rank | ID | Player Name | Role | PRR | 90% CI | $P(\\text{Top-10})$ | HP Balls | IPL % | 2026 Balls | Strategic Scouting Profile |")
@@ -239,7 +269,7 @@ def generate_markdown_report(top_bat, top_bowl, ml_metrics, feat_df, emp_params,
 
     with open(MD_REPORT_PATH, "w", encoding="utf-8") as f:
         f.write("\n".join(lines))
-    print(f"✅ Saved ultra-compact executive report to {MD_REPORT_PATH}")
+    print(f"✅ Saved publication-grade report to {MD_REPORT_PATH}")
 
 
 def generate_pptx_deck(top_bat, top_bowl, ml_metrics, emp_params, val_sens_data=None):
