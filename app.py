@@ -400,12 +400,12 @@ with tab1:
         st.markdown("#### Stage 1: Information-Theoretic Leverage & GMM Crossover")
         st.markdown("**Continuous Win Probability Dispersion:** Evaluates live dispersion across Dot, Single, Boundary, and Dismissal:")
         st.latex(r"\sigma_{\text{WP}, i} = \sqrt{ p_{\text{dot}}(\Delta \text{WP}_{\text{dot}})^2 + p_1(\Delta \text{WP}_1)^2 + p_4(\Delta \text{WP}_4)^2 + \mathbb{E}[W](\Delta \text{WP}_{\text{wkt}})^2 }")
-        st.markdown(rf"**GMM Regime Separation:** Fitted on $\log(1 + L_i)$, yielding crossover threshold $L^* = {l_star:.4f}$ (top {hp_share:.1f}% deliveries).")
+        st.markdown(f"**GMM Regime Separation:** Fitted on $\\log(1 + L_i)$, yielding crossover threshold $L^* = {l_star:.4f}$ (top {hp_share:.1f}% deliveries).")
 
         st.markdown("#### Stage 2: Endogenous Wicket Valuation & Matchup Ridge")
         st.markdown("**ML Wicket Depletion Cost ($C_{\\text{wkt}}$):** Run-expectancy drop when a wicket falls at current state:")
         st.latex(r"C_{\text{wkt}, i} = \max\left(1.0,\; \widehat{R}_{\text{rem}}(b-1, W) - \widehat{R}_{\text{rem}}(b-1, \min(9, W+1))\right)")
-        st.markdown(rf"**Variance Scaling & Ridge Regularization:** Wicket impact scaled via $\lambda = {emp_params.get('bowler_wicket_variance_ratio_lambda', 1.3176):.4f}$. Bipartite network regularization selected at $\alpha^* = {emp_params.get('ridge_regularization_alpha_star', 500.0):.1f}$ via 5-Fold GroupKFold CV.")
+        st.markdown(f"**Variance Scaling & Ridge Regularization:** Wicket impact scaled via $\\lambda = {emp_params.get('bowler_wicket_variance_ratio_lambda', 1.3176):.4f}$. Bipartite network regularization selected at $\\alpha^* = {emp_params.get('ridge_regularization_alpha_star', 500.0):.1f}$ via 5-Fold GroupKFold CV.")
 
     with c2:
         st.markdown("#### Stage 3: ANOVA Empirical Bayes Shrinkage & De-Attenuated OLS")
@@ -415,7 +415,7 @@ with tab1:
         st.latex(r"\hat{\Delta}_p^{\text{EB}} = \left(\frac{N_{\text{HP}, p}}{N_{\text{HP}, p} + K_{\text{HP}}}\right) \left(\bar{v}_{\text{HP}, p} - \hat{\rho} \cdot \bar{v}_{\text{base}, p}\right)")
         r_bat_val = emp_params.get('unconstrained_ols_slopes', {}).get('rho_bat', 0.2000)
         r_bowl_val = emp_params.get('unconstrained_ols_slopes', {}).get('rho_bowl', 0.3969)
-        st.markdown(rf"**Lord's Paradox Resolution:** Regression slopes $\hat{\rho}_{{\text{{bat}}}} = {r_bat_val:.4f}$ and $\hat{\rho}_{{\text{{bowl}}}} = {r_bowl_val:.4f}$ preserve elite baselines.")
+        st.markdown(f"**Lord's Paradox Resolution:** Regression slopes $\\hat{{\\rho}}_{{\\text{{bat}}}} = {r_bat_val:.4f}$ and $\\hat{{\\rho}}_{{\\text{{bowl}}}} = {r_bowl_val:.4f}$ preserve elite baselines.")
 
         st.markdown("#### Stage 4: PCA Composite PRR & Normal CDF Mapping")
         st.markdown("**Unsupervised Principal Component Analysis:** Weights the four orthogonal performance dimensions:")
