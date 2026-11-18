@@ -91,6 +91,18 @@ def generate_markdown_report(top_bat, top_bowl, ml_metrics, feat_df, emp_params,
         role_type = r.get("pace_or_spin", "Bowler")
         lines.append(f"| **{int(r['Rank'])}** | `{p_id}` | **{p_name}** | {role_type} | {int(r['total_balls']):,} | {int(r['HP_Deliveries']):,} | {int(r['M_HP'])} | {r['Base_Economy']:.2f} | **{r['HP_Economy']:.2f}** | {delta_val:+.2f} | {r['Consistency_Pct']:.1f}% | **{r['PRR_Score']:.2f}** |")
     lines.append("")
+
+    # Actionability & Roster Strategy Matrix for RR
+    lines.append("### 🎯 IPL 2027 Auction Actionability & Roster Strategy for Rajasthan Royals")
+    lines.append("")
+    lines.append("> **Methodological Context:** The official Round 1 competition dataset comprises all legal T20/IPL deliveries (2022–2026) without external player contract, retention, or purse metadata. To preserve strict scientific objectivity, our official Top 10 models evaluate and rank the full global dataset purely on empirical high-pressure performance. For executive decision-making, this actionability matrix translates those objective rankings directly into Rajasthan Royals' practical 2027 auction war-room strategy:")
+    lines.append("")
+    lines.append("| Strategic Roster Tier | Players & PRR Metrics | Strategic Rationale & Auction Actionability |")
+    lines.append("|:----------------------|:----------------------|:--------------------------------------------|")
+    lines.append("| **1. RR Retained Core Validation** | **Yashasvi Jaiswal** (#10 Batter, PRR **93.83**) | • **Franchise Cornerstone:** Empirically validates RR's marquee long-term retention. Jaiswal accelerates under pressure (153.7 Base $\\to$ **161.0 HP SR**, $\\hat{\\Delta} = +14.62$, 70.0% consistency) while anchoring the top order across both Jaipur spin-grip and Guwahati pace-friendly micro-climates. |")
+    lines.append("| **2. Prime IPL 2027 Auction / Trade Targets**<br>*(High-Probability Availability)* | **Bowlers:**<br>• Josh Hazlewood (#2 Bowler, PRR **93.46**)<br>• Bhuvneshwar Kumar (#3 Bowler, PRR **90.85**)<br>• Nathan Ellis (#7 Bowler, PRR **83.20**)<br>• Lockie Ferguson (#8 Bowler, PRR **73.60**)<br>• Noor Ahmad (#9 Bowler, PRR **73.21**)<br><br>**Batters:**<br>• Glenn Maxwell (#7 Batter, PRR **96.26**)<br>• David Miller (#8 Batter, PRR **95.54**)<br><br>**Top-15 Bubble Targets:**<br>• Mitchell Marsh, Daryl Mitchell, Mustafizur Rahman, Wanindu Hasaranga | • **Immediate High-Priority War-Room Acquisitions:** Elite clutch performers frequently available via auction cycles, mini-auctions, or targeted trades.<br>• **Pace Containment:** Hazlewood (7.75 HP Econ), Bhuvneshwar (8.18 HP Econ), and Ellis (7.73 HP Econ, $\\hat{\\Delta} = +25.34$) provide instant death-overs par suppression in Guwahati dew.<br>• **Jaipur Spin Fortress:** Noor Ahmad (7.61 HP Econ) pairs seamlessly with Jaipur’s boundary dimensions.<br>• **Clutch Elevation:** Maxwell (168.5 HP SR) and Miller (159.6 HP SR) solve high-leverage chase phases at accessible market valuation. |")
+    lines.append("| **3. Global Franchise Benchmarks**<br>*(Mega-Auction / Trade-Only Pillars)* | **Batters:**<br>• Heinrich Klaasen (#1, PRR **99.24**)<br>• Tim David (#2, PRR **99.19**)<br>• Rajat Patidar (#3, PRR **98.70**)<br>• Tilak Varma (#4, PRR **97.35**)<br>• Suryakumar Yadav (#5, PRR **97.20**)<br>• Rinku Singh (#6, PRR **97.08**)<br>• Shreyas Iyer (#9, PRR **94.98**)<br><br>**Bowlers:**<br>• Rashid Khan (#1, PRR **96.14**)<br>• Jasprit Bumrah (#4, PRR **87.76**)<br>• Sunil Narine (#5, PRR **87.59**)<br>• Varun Chakravarthy (#6, PRR **84.85**)<br>• Matheesha Pathirana (#10, PRR **64.08**) | • **Market Ceiling Calibration:** Established core franchise cornerstones typically locked via multi-year retentions.<br>• **Opponent Neutralization & Trade Monitoring:** Serve as our model's golden valuation standards. RR management uses these benchmarks to evaluate counter-strategies when facing them or to monitor rare trade window / mega-auction release opportunities. |")
+    lines.append("")
     lines.append("---")
     lines.append("")
 
@@ -633,20 +645,50 @@ def generate_pptx_deck(top_bat, top_bowl, ml_metrics, emp_params, val_sens_data=
                 p.font.color.rgb = COLOR_WHITE
                 p.alignment = PP_ALIGN.CENTER
 
-    # SLIDE 7: BATTER & BOWLER CLUTCH MATRIX CARDS
+    # SLIDE 7: IPL 2027 AUCTION ACTIONABILITY & ROSTER STRATEGY
     slide7 = prs.slides.add_slide(blank_layout)
     set_slide_background(slide7, COLOR_DEEP_NAVY)
-    add_header(slide7, "6. Key Player Spotlights: Klaasen, David, Rashid & Hazlewood")
+    add_header(slide7, "6. IPL 2027 Auction Actionability & Roster Strategy for Rajasthan Royals")
 
-    spotlights = [
-        ("Heinrich Klaasen (#1 Bat | PRR 99.24)", "464 HP balls, 37 matches. High-Pressure SR explodes to 176.5 from 162.0 baseline (+14.5 acceleration). 53 sixes under pressure. Highest clutch elevation in cricket.", COLOR_ROYALS_PINK, Inches(1.0), Inches(2.0)),
-        ("Tim David (#2 Bat | PRR 99.19)", "503 HP balls, 40 matches. High-Pressure SR of 182.7 (+8.6 elevation). 72 sixes under pressure. 68.1% consistency. World-class death-overs finisher.", COLOR_GOLD, Inches(6.8), Inches(2.0)),
-        ("Rashid Khan (#1 Bowl | PRR 96.14)", "826 HP balls, 75 matches. HP Economy conceded: 7.20 RPO vs 8.06 Expected Par (-10.7% suppression). 57 HP wickets, 280 dot balls. Elite spin master.", COLOR_CYAN, Inches(1.0), Inches(4.5)),
-        ("Josh Hazlewood (#2 Bowl | PRR 93.46)", "579 HP balls, 47 matches. HP Economy: 7.75 RPO vs 8.71 Expected Par (-11.0% suppression). 44 HP wickets, 258 dot balls. Premier pace containment.", COLOR_GREEN, Inches(6.8), Inches(4.5))
+    strategy_cards = [
+        (
+            "1. RR Retained Core",
+            "Yashasvi Jaiswal (#10 | PRR 93.83)",
+            [
+                "Franchise Pillar: Empirically validates RR's marquee long-term retention.",
+                "Clutch Acceleration: 153.7 Base -> 161.0 HP SR (+14.62 elevation, 70.0% consistency).",
+                "Home Fortress Fit: Dominates across Jaipur spin and Guwahati pace conditions."
+            ],
+            COLOR_ROYALS_PINK,
+            Inches(0.8), Inches(3.6)
+        ),
+        (
+            "2. Prime Auction / Trade Targets",
+            "High-Probability 2027 Availability",
+            [
+                "Pace Containment: Josh Hazlewood (#2 | 93.46), Bhuvneshwar Kumar (#3 | 90.85), Nathan Ellis (#7 | 83.20), Lockie Ferguson (#8 | 73.60).",
+                "Spin Fortress: Noor Ahmad (#9 | 73.21) tailor-made for Jaipur.",
+                "Middle-Order Elevation: Glenn Maxwell (#7 | 96.26), David Miller (#8 | 95.54).",
+                "Top-15 Bubble Targets: Mitchell Marsh, Daryl Mitchell, Mustafizur Rahman, Wanindu Hasaranga."
+            ],
+            COLOR_CYAN,
+            Inches(4.6), Inches(4.3)
+        ),
+        (
+            "3. Global Franchise Benchmarks",
+            "Mega-Auction / Trade-Only Pillars",
+            [
+                "Batters: Klaasen (#1), Tim David (#2), Patidar (#3), Tilak Varma (#4), SKY (#5), Rinku Singh (#6), Shreyas Iyer (#9).",
+                "Bowlers: Rashid Khan (#1), Jasprit Bumrah (#4), Sunil Narine (#5), Varun Chakravarthy (#6), Matheesha Pathirana (#10).",
+                "Strategic Utility: Objective yardsticks for opposition scouting, ceiling calibration & trade monitoring."
+            ],
+            COLOR_GOLD,
+            Inches(9.1), Inches(3.4)
+        )
     ]
 
-    for title, desc, col, x, y in spotlights:
-        shape = slide7.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, x, y, Inches(5.5), Inches(2.2))
+    for title, subtitle, bullets, col, left, width in strategy_cards:
+        shape = slide7.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, left, Inches(1.8), width, Inches(4.5))
         shape.fill.solid()
         shape.fill.fore_color.rgb = COLOR_ROYAL_SLATE
         shape.line.color.rgb = col
@@ -654,16 +696,34 @@ def generate_pptx_deck(top_bat, top_bowl, ml_metrics, emp_params, val_sens_data=
 
         tf = shape.text_frame
         tf.word_wrap = True
+
         p = tf.paragraphs[0]
         p.text = title
         p.font.size = Pt(14)
         p.font.bold = True
         p.font.color.rgb = col
 
-        p2 = tf.add_paragraph()
-        p2.text = f"\n{desc}"
-        p2.font.size = Pt(11)
-        p2.font.color.rgb = COLOR_WHITE
+        p_sub = tf.add_paragraph()
+        p_sub.text = subtitle
+        p_sub.font.size = Pt(10)
+        p_sub.font.bold = True
+        p_sub.font.color.rgb = COLOR_WHITE
+
+        for b in bullets:
+            p_b = tf.add_paragraph()
+            p_b.text = f"• {b}"
+            p_b.font.size = Pt(9.5)
+            p_b.font.color.rgb = COLOR_MUTED
+
+    # Bottom note
+    tb_note = slide7.shapes.add_textbox(Inches(0.8), Inches(6.45), Inches(11.7), Inches(0.8))
+    tf_note = tb_note.text_frame
+    tf_note.word_wrap = True
+    p_n = tf_note.paragraphs[0]
+    p_n.text = "Methodological Transparency: Round 1 dataset contains no external contract/retention flags. Top 10 objectively ranks global performance while this matrix translates ratings into RR's 2027 auction war-room strategy."
+    p_n.font.size = Pt(9.5)
+    p_n.font.italic = True
+    p_n.font.color.rgb = COLOR_WHITE
 
     # SLIDE 8: EMPIRICAL SENSITIVITY & TEMPORAL VALIDATION
     slide8 = prs.slides.add_slide(blank_layout)

@@ -1,6 +1,6 @@
 # 🏏 Rajasthan Royals SupeRR Selector Season 2 — Round 1 Methodology Report
 ## Identifying the Most Reliable Players Under Pressure in T20 Cricket (2022–2026)
-**Submission Date:** November 17, 2026 | **Platform:** The Pink Canvas OS
+**Submission Date:** November 18, 2026 | **Platform:** The Pink Canvas OS
 **Dataset:** Official 2022–2026 Historical IPL & T20I Relational Data Pack (200,999 Deliveries, 867 Matches)
 **Architecture:** 4-Stage Probabilistic & Econometric Machine Learning Pipeline (Option B: Pure Empirical Architecture)
 
@@ -39,6 +39,16 @@ Below are the exact ordered Top 10 lists produced by our pure, self-governing **
 | **8** | `4692` | **Lockie Ferguson** | Pace | 1,090 | 347 | 33 | 8.37 | **8.58** | +15.09 | 64.1% | **73.60** |
 | **9** | `7967` | **Noor Ahmad** | Spin | 1,472 | 525 | 38 | 7.65 | **7.61** | +12.75 | 61.4% | **73.21** |
 | **10** | `8661` | **Matheesha Pathirana** | Pace | 1,141 | 424 | 28 | 7.68 | **8.02** | +8.74 | 61.8% | **64.08** |
+
+### 🎯 IPL 2027 Auction Actionability & Roster Strategy for Rajasthan Royals
+
+> **Methodological Context:** The official Round 1 competition dataset comprises all legal T20/IPL deliveries (2022–2026) without external player contract, retention, or purse metadata. To preserve strict scientific objectivity, our official Top 10 models evaluate and rank the full global dataset purely on empirical high-pressure performance. For executive decision-making, this actionability matrix translates those objective rankings directly into Rajasthan Royals' practical 2027 auction war-room strategy:
+
+| Strategic Roster Tier | Players & PRR Metrics | Strategic Rationale & Auction Actionability |
+|:----------------------|:----------------------|:--------------------------------------------|
+| **1. RR Retained Core Validation** | **Yashasvi Jaiswal** (#10 Batter, PRR **93.83**) | • **Franchise Cornerstone:** Empirically validates RR's marquee long-term retention. Jaiswal accelerates under pressure (153.7 Base $\to$ **161.0 HP SR**, $\hat{\Delta} = +14.62$, 70.0% consistency) while anchoring the top order across both Jaipur spin-grip and Guwahati pace-friendly micro-climates. |
+| **2. Prime IPL 2027 Auction / Trade Targets**<br>*(High-Probability Availability)* | **Bowlers:**<br>• Josh Hazlewood (#2 Bowler, PRR **93.46**)<br>• Bhuvneshwar Kumar (#3 Bowler, PRR **90.85**)<br>• Nathan Ellis (#7 Bowler, PRR **83.20**)<br>• Lockie Ferguson (#8 Bowler, PRR **73.60**)<br>• Noor Ahmad (#9 Bowler, PRR **73.21**)<br><br>**Batters:**<br>• Glenn Maxwell (#7 Batter, PRR **96.26**)<br>• David Miller (#8 Batter, PRR **95.54**)<br><br>**Top-15 Bubble Targets:**<br>• Mitchell Marsh, Daryl Mitchell, Mustafizur Rahman, Wanindu Hasaranga | • **Immediate High-Priority War-Room Acquisitions:** Elite clutch performers frequently available via auction cycles, mini-auctions, or targeted trades.<br>• **Pace Containment:** Hazlewood (7.75 HP Econ), Bhuvneshwar (8.18 HP Econ), and Ellis (7.73 HP Econ, $\hat{\Delta} = +25.34$) provide instant death-overs par suppression in Guwahati dew.<br>• **Jaipur Spin Fortress:** Noor Ahmad (7.61 HP Econ) pairs seamlessly with Jaipur’s boundary dimensions.<br>• **Clutch Elevation:** Maxwell (168.5 HP SR) and Miller (159.6 HP SR) solve high-leverage chase phases at accessible market valuation. |
+| **3. Global Franchise Benchmarks**<br>*(Mega-Auction / Trade-Only Pillars)* | **Batters:**<br>• Heinrich Klaasen (#1, PRR **99.24**)<br>• Tim David (#2, PRR **99.19**)<br>• Rajat Patidar (#3, PRR **98.70**)<br>• Tilak Varma (#4, PRR **97.35**)<br>• Suryakumar Yadav (#5, PRR **97.20**)<br>• Rinku Singh (#6, PRR **97.08**)<br>• Shreyas Iyer (#9, PRR **94.98**)<br><br>**Bowlers:**<br>• Rashid Khan (#1, PRR **96.14**)<br>• Jasprit Bumrah (#4, PRR **87.76**)<br>• Sunil Narine (#5, PRR **87.59**)<br>• Varun Chakravarthy (#6, PRR **84.85**)<br>• Matheesha Pathirana (#10, PRR **64.08**) | • **Market Ceiling Calibration:** Established core franchise cornerstones typically locked via multi-year retentions.<br>• **Opponent Neutralization & Trade Monitoring:** Serve as our model's golden valuation standards. RR management uses these benchmarks to evaluate counter-strategies when facing them or to monitor rare trade window / mega-auction release opportunities. |
 
 ---
 
