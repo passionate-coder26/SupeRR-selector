@@ -71,7 +71,7 @@ def load_and_reconstruct_deliveries():
     )
     df = bbb.merge(
         m_comp[[
-            "match_id", "comp_name", "match_format", "season", "venue_id",
+            "match_id", "comp_name", "match_format", "season", "match_date", "venue_id",
             "home_team", "away_team", "home_team_id", "away_team_id", "win_team_id",
             "knock_out", "stage", "first_inn_revised_overs", "second_inn_revised_overs", "revised_target"
         ]],
@@ -81,6 +81,8 @@ def load_and_reconstruct_deliveries():
 
     # Chronological sort
     df = df.sort_values(["match_id", "innings", "overid", "over_ball_num", "innings_ball_num"]).reset_index(drop=True)
+    df["year"] = pd.to_datetime(df["match_date"]).dt.year
+    df["is_ipl"] = df["comp_name"].str.contains("IPL", na=False)
 
     # Runs & Legal ball accounting
     df["total_ball_runs"] = df["runs"] + df["extras1_runs"].fillna(0) + df["extras_2_runs"].fillna(0)
@@ -869,6 +871,150 @@ def compute_hierarchical_random_slopes_and_lcb(leg, best_alpha=500.0, lambda_wkt
     print(f"  ✓ Learned Bowlers PCA Loadings [mu, alpha, delta, cons]: {bowl_pca_w.round(4)}")
 
     # ---------------------------------------------------------
+    # 400-REPLICATE CLUSTER BOOTSTRAP, IPL % & 2026 ACTIVITY SCREEN
+    # ---------------------------------------------------------
+    # IPL % and 2026 ball counters
+    if "is_ipl" in leg.columns:
+        bat_hp_ipl = (leg[leg["is_HP"]].groupby("striker_id")["is_ipl"].mean() * 100.0).round(1)
+        bowl_hp_ipl = (leg[leg["is_HP"]].groupby("bowler_id")["is_ipl"].mean() * 100.0).round(1)
+    else:
+        bat_hp_ipl = pd.Series(dtype=float)
+        bowl_hp_ipl = pd.Series(dtype=float)
+
+    if "year" in leg.columns:
+        bat_2026 = leg[leg["year"] == 2026].groupby("striker_id")["runs"].count()
+        bowl_2026 = leg[leg["year"] == 2026].groupby("bowler_id")["runs"].count()
+    else:
+        bat_2026 = pd.Series(dtype=int)
+        bowl_2026 = pd.Series(dtype=int)
+
+    final_bat["IPL_HP_Share_Pct"] = final_bat["striker_id"].map(bat_hp_ipl).fillna(0.0).round(1)
+    final_bat["Active_2026_Balls"] = final_bat["striker_id"].map(bat_2026).fillna(0).astype(int)
+
+    final_bowl["IPL_HP_Share_Pct"] = final_bowl["bowler_id"].map(bowl_hp_ipl).fillna(0.0).round(1)
+    final_bowl["Active_2026_Balls"] = final_bowl["bowler_id"].map(bowl_2026).fillna(0).astype(int)
+
+    def run_cluster_bootstrap(df_players, m_df, id_col, k_hp, rho, alpha_0, nu_0, loadings, role_col=None, n_iter=400, seed=42):
+        rng = np.random.RandomState(seed)
+        player_ids = list(df_players[id_col])
+        n_players = len(player_ids)
+        p_matches = {}
+        for pid in player_ids:
+            sub = m_df[m_df[id_col] == pid]
+            p_matches[pid] = {
+                "m_v": sub["m_v"].values if "m_v" in sub.columns else np.zeros(len(sub)),
+                "m_balls": sub["m_balls"].values if "m_balls" in sub.columns else np.ones(len(sub)),
+                "v_base": float(df_players.loc[df_players[id_col] == pid, "v_base_mean"].iloc[0]),
+                "alpha_EB": float(df_players.loc[df_players[id_col] == pid, "alpha_EB"].iloc[0]),
+                "M": len(sub),
+                "N_HP": int(df_players.loc[df_players[id_col] == pid, "N_HP"].iloc[0]),
+                "role": df_players.loc[df_players[id_col] == pid, role_col].iloc[0] if role_col else None,
+                "score_orig": float(df_players.loc[df_players[id_col] == pid, "PRR_Final"].iloc[0])
+            }
+
+        replicate_scores = np.zeros((n_iter, n_players))
+        replicate_ranks = np.zeros((n_iter, n_players))
+        w1, w2, w3, w4 = loadings[:4]
+        w_se = 1.0 / np.sqrt(4.0)
+
+        for it in range(n_iter):
+            mus = np.zeros(n_players)
+            deltas = np.zeros(n_players)
+            cons = np.zeros(n_players)
+            ses = np.zeros(n_players)
+            alphas = np.zeros(n_players)
+
+            for i, pid in enumerate(player_ids):
+                data = p_matches[pid]
+                M = data["M"]
+                if M > 1:
+                    idx = rng.choice(M, size=M, replace=True)
+                    sample_v = data["m_v"][idx]
+                    sample_balls = data["m_balls"][idx]
+                else:
+                    sample_v = data["m_v"]
+                    sample_balls = data["m_balls"]
+
+                tot_b = max(1, np.sum(sample_balls))
+                v_hp_resample = float(np.sum(sample_v * sample_balls) / tot_b)
+                n_hp = data["N_HP"]
+                v_base = data["v_base"]
+
+                shrunk_factor = n_hp / (n_hp + k_hp)
+                mu_eb = shrunk_factor * v_hp_resample
+                delta_eb = shrunk_factor * (v_hp_resample - rho * v_base)
+                pos_m = int(np.sum(sample_v > 0))
+                cons_pct = 100.0 * (pos_m + alpha_0) / (M + nu_0)
+                s_m = float(np.std(sample_v, ddof=1)) if len(sample_v) > 1 else 10.0
+                se_m = s_m / np.sqrt(M + 5.0)
+
+                mus[i] = mu_eb
+                deltas[i] = delta_eb
+                cons[i] = cons_pct
+                ses[i] = se_m
+                alphas[i] = data["alpha_EB"]
+
+            z_mu = zscore(mus)
+            z_al = zscore(alphas)
+            z_del = zscore(deltas)
+            z_c = zscore(cons)
+            z_s = zscore(ses)
+
+            raw = w1 * z_mu + w2 * z_al + w3 * z_del + w4 * z_c - w_se * z_s
+
+            if role_col is not None:
+                roles = [p_matches[pid]["role"] for pid in player_ids]
+                prr_rep = np.zeros(n_players)
+                for r in set(roles):
+                    r_indices = [idx for idx, x in enumerate(roles) if x == r]
+                    r_raw = raw[r_indices]
+                    z_cohort = zscore(r_raw) if len(r_indices) > 1 and np.std(r_raw) > 0 else np.zeros(len(r_indices))
+                    prr_rep[r_indices] = (norm.cdf(z_cohort) * 100.0).round(2)
+            else:
+                z_cohort = zscore(raw)
+                prr_rep = (norm.cdf(z_cohort) * 100.0).round(2)
+
+            replicate_scores[it, :] = prr_rep
+            order = np.argsort(-prr_rep)
+            ranks = np.zeros(n_players)
+            for rank_pos, p_idx in enumerate(order, 1):
+                ranks[p_idx] = rank_pos
+            replicate_ranks[it, :] = ranks
+
+        ci_low = np.zeros(n_players)
+        ci_high = np.zeros(n_players)
+        for i, pid in enumerate(player_ids):
+            s_orig = p_matches[pid]["score_orig"]
+            se_boot = float(np.std(replicate_scores[:, i]))
+            ci_low[i] = max(0.0, round(s_orig - 1.645 * se_boot, 1))
+            ci_high[i] = min(100.0, round(s_orig + 1.645 * se_boot, 1))
+
+        p_top10 = ((replicate_ranks <= 10).mean(axis=0) * 100.0).round(1)
+        return ci_low, ci_high, p_top10
+
+    ci_l_bat, ci_h_bat, p_top10_bat = run_cluster_bootstrap(
+        final_bat, b_m, "striker_id",
+        k_hp=k_hp_bat, rho=rho_bat,
+        alpha_0=alpha_0_bat, nu_0=nu_0_bat,
+        loadings=loadings_bat, role_col=None,
+        n_iter=400, seed=42
+    )
+    final_bat["PRR_CI_90_Low"] = ci_l_bat
+    final_bat["PRR_CI_90_High"] = ci_h_bat
+    final_bat["P_Top_10_Pct"] = p_top10_bat
+
+    ci_l_bowl, ci_h_bowl, p_top10_bowl = run_cluster_bootstrap(
+        final_bowl, bw_m, "bowler_id",
+        k_hp=k_hp_bowl, rho=rho_bowl,
+        alpha_0=alpha_0_bowl, nu_0=nu_0_bowl,
+        loadings=bowl_pca_w, role_col="pace_or_spin",
+        n_iter=400, seed=42
+    )
+    final_bowl["PRR_CI_90_Low"] = ci_l_bowl
+    final_bowl["PRR_CI_90_High"] = ci_h_bowl
+    final_bowl["P_Top_10_Pct"] = p_top10_bowl
+
+    # ---------------------------------------------------------
     # FORMAT FOR DOWNSTREAM COMPATIBILITY & EXPORT
     # ---------------------------------------------------------
     final_bat["player_name"] = final_bat["striker_name"]
@@ -897,13 +1043,17 @@ def compute_hierarchical_random_slopes_and_lcb(leg, best_alpha=500.0, lambda_wkt
 
     top10_bat = final_bat.head(10).copy()
     top10_bowl = final_bowl.head(10).copy()
+    bubble_bat = final_bat.iloc[10:20].copy()
+    bubble_bowl = final_bowl.iloc[10:20].copy()
 
     if export_csv:
         top10_bat.to_csv(os.path.join(PROCESSED_DIR, "top_batters_under_pressure.csv"), index=False)
+        bubble_bat.to_csv(os.path.join(PROCESSED_DIR, "bubble_batters_ranks_11_20.csv"), index=False)
         b_m.to_csv(os.path.join(PROCESSED_DIR, "batter_match_by_match_consistency.csv"), index=False)
         print(f"  ✓ Exported Official Option B Top 10 Batters (from {len(final_bat)} eligible batters).")
 
         top10_bowl.to_csv(os.path.join(PROCESSED_DIR, "top_bowlers_under_pressure.csv"), index=False)
+        bubble_bowl.to_csv(os.path.join(PROCESSED_DIR, "bubble_bowlers_ranks_11_20.csv"), index=False)
         bw_m.to_csv(os.path.join(PROCESSED_DIR, "bowler_match_by_match_consistency.csv"), index=False)
         print(f"  ✓ Exported Official Option B Top 10 Bowlers (from {len(eligible_bowl)} eligible bowlers).")
 

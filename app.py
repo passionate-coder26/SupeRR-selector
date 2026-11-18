@@ -439,11 +439,16 @@ with tab2:
 
     # Dropdown Selection Table for Unstop
     st.markdown("#### 📋 Official Submission Table (Rank 1 to 10)")
-    display_bat_cols = ["Rank", "player_name", "total_balls", "HP_Deliveries", "M_HP", "Base_SR", "HP_SR", "Delta_Clutch", "Consistency_Pct", "PRR_Score"]
+    display_bat_cols = ["Rank", "player_name", "total_balls", "HP_Deliveries", "M_HP", "Base_SR", "HP_SR", "Delta_Clutch", "Consistency_Pct", "PRR_CI_90_Low", "PRR_CI_90_High", "P_Top_10_Pct", "IPL_HP_Share_Pct", "PRR_Score"]
     display_bat_table = top10_bat[[c for c in display_bat_cols if c in top10_bat.columns]].copy()
+    display_bat_table["90% CI"] = display_bat_table.apply(lambda r: f"[{r.get('PRR_CI_90_Low', 0.0):.1f}, {r.get('PRR_CI_90_High', 100.0):.1f}]", axis=1)
+    display_bat_table = display_bat_table.drop(columns=["PRR_CI_90_Low", "PRR_CI_90_High"], errors="ignore")
+    
+    col_order_bat = ["Rank", "player_name", "total_balls", "HP_Deliveries", "M_HP", "Base_SR", "HP_SR", "Delta_Clutch", "Consistency_Pct", "90% CI", "P_Top_10_Pct", "IPL_HP_Share_Pct", "PRR_Score"]
+    display_bat_table = display_bat_table[[c for c in col_order_bat if c in display_bat_table.columns]]
     display_bat_table.columns = [
         "Unstop Rank", "Player Name", "Total Balls", "HP Balls (L_i >= L*)", "HP Matches", "Base SR", "HP SR",
-        "Clutch Elevation (Δ_EB)", "Consistency %", "PRR Score"
+        "Clutch Elevation (Δ_EB)", "Consistency %", "90% CI", "P(Top-10)", "IPL HP %", "PRR Score"
     ]
     st.dataframe(
         display_bat_table.style.format({
@@ -451,6 +456,8 @@ with tab2:
             "HP SR": "{:.1f}",
             "Clutch Elevation (Δ_EB)": "{:+.2f}",
             "Consistency %": "{:.1f}%",
+            "P(Top-10)": "{:.1f}%",
+            "IPL HP %": "{:.1f}%",
             "PRR Score": "{:.2f}"
         }).background_gradient(subset=["PRR Score"], cmap="RdPu"),
         use_container_width=True,
@@ -467,18 +474,25 @@ with tab2:
 
     selected_bat = bat_df[bat_df["player_name"] == selected_bat_name].iloc[0]
 
-    bd1, bd2, bd3, bd4 = st.columns(4)
+    bd1, bd2, bd3, bd4, bd5 = st.columns(5)
     delta_bat_val = selected_bat.get("Delta_Clutch", selected_bat.get("Delta_EB", 0.0))
     hp_balls_b = selected_bat.get("HP_Deliveries", selected_bat.get("N_HP", 0))
     m_hp_b = selected_bat.get("M_HP", 0)
+    ci_low_b = selected_bat.get("PRR_CI_90_Low", 0.0)
+    ci_high_b = selected_bat.get("PRR_CI_90_High", 100.0)
+    p_top10_b = selected_bat.get("P_Top_10_Pct", 0.0)
+    ipl_b = selected_bat.get("IPL_HP_Share_Pct", 0.0)
+
     with bd1:
-        st.metric("Pressure Reliability Rating", f"{selected_bat['PRR_Score']:.2f} / 100", f"Rank #{int(selected_bat['Rank'])}")
+        st.metric("PRR Score & Rank", f"{selected_bat['PRR_Score']:.2f} / 100", f"Rank #{int(selected_bat['Rank'])}")
     with bd2:
         st.metric("High-Pressure Strike Rate", f"{selected_bat['HP_SR']:.1f}", f"{delta_bat_val:+.2f} Clutch Elevation (Δ_EB)")
     with bd3:
         st.metric("Beta-Binomial Consistency", f"{selected_bat['Consistency_Pct']:.1f}%", f"Match Uncertainty SE: {selected_bat.get('SE_match', 0.0):.2f}")
     with bd4:
-        st.metric("Clutch Sample & Matches", f"{int(hp_balls_b):,} HP Balls", f"{int(m_hp_b)} Qualifying Matches")
+        st.metric("400-Rep Bootstrap 90% CI", f"[{ci_low_b:.1f}, {ci_high_b:.1f}]", f"P(Top-10): {p_top10_b:.1f}%")
+    with bd5:
+        st.metric("Volume & IPL Focus", f"{int(hp_balls_b):,} HP Balls", f"{ipl_b:.1f}% IPL HP Share")
 
     # Scatter Plot: Baseline vs HP Strike Rate
     st.markdown("#### 📊 Baseline vs. High-Pressure Strike Rate (Clutch Elevators vs. Decliners)")
@@ -526,11 +540,16 @@ with tab3:
 
     # Dropdown Selection Table for Unstop
     st.markdown("#### 📋 Official Submission Table (Rank 1 to 10)")
-    display_bowl_cols = ["Rank", "player_name", "pace_or_spin", "total_balls", "HP_Deliveries", "M_HP", "Base_Economy", "HP_Economy", "Delta_Clutch", "Consistency_Pct", "PRR_Score"]
+    display_bowl_cols = ["Rank", "player_name", "pace_or_spin", "total_balls", "HP_Deliveries", "M_HP", "Base_Economy", "HP_Economy", "Delta_Clutch", "Consistency_Pct", "PRR_CI_90_Low", "PRR_CI_90_High", "P_Top_10_Pct", "IPL_HP_Share_Pct", "PRR_Score"]
     display_bowl_table = top10_bowl[[c for c in display_bowl_cols if c in top10_bowl.columns]].copy()
+    display_bowl_table["90% CI"] = display_bowl_table.apply(lambda r: f"[{r.get('PRR_CI_90_Low', 0.0):.1f}, {r.get('PRR_CI_90_High', 100.0):.1f}]", axis=1)
+    display_bowl_table = display_bowl_table.drop(columns=["PRR_CI_90_Low", "PRR_CI_90_High"], errors="ignore")
+
+    col_order_bowl = ["Rank", "player_name", "pace_or_spin", "total_balls", "HP_Deliveries", "M_HP", "Base_Economy", "HP_Economy", "Delta_Clutch", "Consistency_Pct", "90% CI", "P_Top_10_Pct", "IPL_HP_Share_Pct", "PRR_Score"]
+    display_bowl_table = display_bowl_table[[c for c in col_order_bowl if c in display_bowl_table.columns]]
     display_bowl_table.columns = [
         "Unstop Rank", "Player Name", "Role", "Total Balls", "HP Balls (L_i >= L*)", "HP Matches", "Base Econ", "HP Econ",
-        "Clutch Elevation (Δ_EB)", "Consistency %", "PRR Score"
+        "Clutch Elevation (Δ_EB)", "Consistency %", "90% CI", "P(Top-10)", "IPL HP %", "PRR Score"
     ]
     st.dataframe(
         display_bowl_table.style.format({
@@ -538,6 +557,8 @@ with tab3:
             "HP Econ": "{:.2f}",
             "Clutch Elevation (Δ_EB)": "{:+.2f}",
             "Consistency %": "{:.1f}%",
+            "P(Top-10)": "{:.1f}%",
+            "IPL HP %": "{:.1f}%",
             "PRR Score": "{:.2f}"
         }).background_gradient(subset=["PRR Score"], cmap="Blues"),
         use_container_width=True,
@@ -554,18 +575,25 @@ with tab3:
 
     selected_bowl = bowl_df[bowl_df["player_name"] == selected_bowl_name].iloc[0]
 
-    bld1, bld2, bld3, bld4 = st.columns(4)
+    bld1, bld2, bld3, bld4, bld5 = st.columns(5)
     delta_bowl_val = selected_bowl.get("Delta_Clutch", selected_bowl.get("Delta_EB", 0.0))
     hp_balls_bw = selected_bowl.get("HP_Deliveries", selected_bowl.get("N_HP", 0))
     m_hp_bw = selected_bowl.get("M_HP", 0)
+    ci_low_bw = selected_bowl.get("PRR_CI_90_Low", 0.0)
+    ci_high_bw = selected_bowl.get("PRR_CI_90_High", 100.0)
+    p_top10_bw = selected_bowl.get("P_Top_10_Pct", 0.0)
+    ipl_bw = selected_bowl.get("IPL_HP_Share_Pct", 0.0)
+
     with bld1:
-        st.metric("Pressure Reliability Rating", f"{selected_bowl['PRR_Score']:.2f} / 100", f"Rank #{int(selected_bowl['Rank'])}")
+        st.metric("PRR Score & Rank", f"{selected_bowl['PRR_Score']:.2f} / 100", f"Rank #{int(selected_bowl['Rank'])}")
     with bld2:
         st.metric("High-Pressure Economy", f"{selected_bowl['HP_Economy']:.2f}", f"{delta_bowl_val:+.2f} Clutch Elevation (Δ_EB)")
     with bld3:
         st.metric("Beta-Binomial Consistency", f"{selected_bowl['Consistency_Pct']:.1f}%", f"Match Uncertainty SE: {selected_bowl.get('SE_match', 0.0):.2f}")
     with bld4:
-        st.metric("Clutch Sample & Matches", f"{int(hp_balls_bw):,} HP Balls", f"{int(m_hp_bw)} Qualifying Matches")
+        st.metric("400-Rep Bootstrap 90% CI", f"[{ci_low_bw:.1f}, {ci_high_bw:.1f}]", f"P(Top-10): {p_top10_bw:.1f}%")
+    with bld5:
+        st.metric("Volume & IPL Focus", f"{int(hp_balls_bw):,} HP Balls", f"{ipl_bw:.1f}% IPL HP Share")
 
     # Scatter Plot: Baseline vs HP Economy
     st.markdown("#### 📊 Baseline vs. High-Pressure Economy (Tighteners vs. Leakers)")
@@ -642,16 +670,18 @@ with tab4:
         )
 
     st.markdown("---")
-    st.markdown("#### 🔬 Real Data-Driven Sensitivity Analysis (Leverage Threshold Stability)")
-    st.caption("Re-computed across all 200,999 deliveries to evaluate whether player rankings are sensitive to the leverage threshold.")
+    st.markdown("#### 🔬 8-Way Methodological Ablation & Baseline Benchmark Table")
+    st.caption("Re-computed across all 200,999 deliveries to benchmark our official 4-stage ML pipeline against 7 alternative specifications.")
 
-    sens_list = val_sens_data.get("leverage_threshold_sensitivity", [])
-    if sens_list:
-        sens_rows = []
-        for s in sens_list:
-            sens_rows.append({
-                "Regime Variant": s["regime_name"],
-                "Cutoff (L_i)": f"L_i >= {s['threshold_L']:.4f}",
+    abl_list = val_sens_data.get("methodological_ablation_and_benchmarks", val_sens_data.get("leverage_threshold_sensitivity", []))
+    if abl_list:
+        abl_rows = []
+        for s in abl_list:
+            t_val = s.get("threshold_L", 0.9927)
+            t_str = f"L_i >= {t_val:.4f}" if isinstance(t_val, (int, float)) else str(t_val)
+            abl_rows.append({
+                "Pipeline Specification": s.get("ablation_check", s.get("regime_name", "-")),
+                "Leverage / Rule": t_str,
                 "HP Deliveries": f"{s['hp_deliveries']:,}",
                 "HP Volume Share": f"{s['hp_share_pct']:.1f}%",
                 "Batters Spearman ρ": f"{s['batters']['spearman_rho']:.4f}",
@@ -659,13 +689,53 @@ with tab4:
                 "Bowlers Spearman ρ": f"{s['bowlers']['spearman_rho']:.4f}",
                 "Bowlers Top 10 Overlap": s['bowlers']['top10_overlap'],
             })
-        st.dataframe(pd.DataFrame(sens_rows), use_container_width=True, hide_index=True)
+        st.dataframe(pd.DataFrame(abl_rows), use_container_width=True, hide_index=True)
     else:
-        st.info("Sensitivity data will be rendered upon running the analytics engine.")
+        st.info("Ablation data will be rendered upon running the analytics engine.")
+
+    st.markdown("---")
+    st.markdown("#### ⚡ Post-Hoc Regime Validation: Live Win Probability Swings (2x2x2)")
+    st.caption("Proving that GMM L* = 0.9927 isolates deliveries that swing live match outcome probability by 3.06x in the 1st innings and 8.36x in the chase.")
+
+    post_hoc = val_sens_data.get("post_hoc_regime_validation_2x2x2", {})
+    if post_hoc and "table" in post_hoc:
+        ph_df = pd.DataFrame(post_hoc["table"])[[
+            "innings_name", "regime", "deliveries", "sr", "econ", "dot_pct", "wicket_risk_pct", "mean_abs_delta_wp_pts"
+        ]]
+        ph_df.columns = ["Innings Phase", "Regime", "Legal Balls", "SR", "Economy", "Dot %", "Wicket Risk %", "Mean |ΔWP| (pts)"]
+        st.dataframe(ph_df, use_container_width=True, hide_index=True)
+
+        swings = post_hoc.get("live_win_probability_swing_multipliers", {})
+        m1_col, m2_col = st.columns(2)
+        with m1_col:
+            st.metric("1st Innings Crunch Win-Swing Multiplier", f"{swings.get('innings_1_multiplier', 3.06):.2f}x", "4.50 pts vs 1.47 pts Ordinary")
+        with m2_col:
+            st.metric("Chase (2nd Inn) Crunch Win-Swing Multiplier", f"{swings.get('innings_2_multiplier', 8.36):.2f}x", "6.52 pts vs 0.78 pts Ordinary")
+
+    st.markdown("---")
+    st.markdown("#### 🧹 Forensic Data Engineering Hygiene & 3-Tier Competitive Scoring Environments")
+    st.caption("Auditing 200,999 raw records, 3-way run attribution, and cross-competition scoring par levels.")
+
+    hygiene = val_sens_data.get("data_engineering_hygiene_audit", {})
+    if hygiene:
+        h1, h2, h3, h4 = st.columns(4)
+        with h1:
+            st.metric("Raw Deliveries Ingested", f"{hygiene.get('raw_deliveries', 200999):,}", f"{hygiene.get('wides_count', 7714):,} Wides Filtered")
+        with h2:
+            st.metric("True Legal Deliveries", f"{hygiene.get('legal_deliveries', 193285):,}", "Strict Legal Over Counting")
+        with h3:
+            st.metric("Reconstructed Runs", f"{hygiene.get('run_decomposition_3way', {}).get('total_reconstructed_runs', 283903):,}", "269.5k Bat + 9.7k Bowler + 4.6k Field")
+        with h4:
+            st.metric("Run Victory Reconciliation", f"{hygiene.get('innings_total_reconciliation', {}).get('reconciliation_rate_pct', 95.56):.1f}%", "100.0% Non-DLS Matches")
+
+        envs = hygiene.get("three_tier_scoring_environments", [])
+        if envs:
+            st.markdown("##### 3-Tier Scoring Environments Benchmark:")
+            st.dataframe(pd.DataFrame(envs)[["environment", "matches", "avg_first_innings_par", "avg_rpo", "description"]], use_container_width=True, hide_index=True)
 
     st.markdown("---")
     st.markdown("#### ⏳ Temporal Out-of-Sample Validation (2022–2024 Train vs. 2025–2026 Test)")
-    st.caption("Strict time-split validation: All ML expectation models trained on 2022–2024 matches (120,248 balls) and evaluated on 2025–2026 matches (80,751 balls).")
+    st.caption("Strict time-split validation: All ML expectation models trained on 2022–2024 matches (115,738 balls) and evaluated on 2025–2026 matches (77,547 balls).")
 
     temp_data = val_sens_data.get("temporal_out_of_sample_validation", {})
     if temp_data:
@@ -728,6 +798,45 @@ with tab4:
                 f"r = {bowl_p.get('pearson_r', 0.3130):.4f}",
                 f"Spearman ρ = {bowl_p.get('spearman_rho', 0.3174):.4f} (n={bowl_p.get('sample_size', 222)} players, p < 0.0001)"
             )
+
+    # 5. Annual Net Value Consistency & Out-of-Time Lift
+    annual_data = val_sens_data.get("season_by_season_consistency_and_lift", {})
+    if annual_data:
+        st.markdown("---")
+        st.markdown("#### 📅 Season-by-Season Net Value Consistency (2022–2026) & 2025–2026 Lift")
+        lift_b = annual_data.get("out_of_time_2025_2026_cohort_lift", {}).get("batters", {})
+        lift_bw = annual_data.get("out_of_time_2025_2026_cohort_lift", {}).get("bowlers", {})
+        l1, l2 = st.columns(2)
+        with l1:
+            st.metric("2025-26 Top 10 Batters HP Strike Rate Lift", f"{lift_b.get('top10_hp_strike_rate', 161.4):.1f} SR", f"+{lift_b.get('elevation_lift_pts', 16.6):.1f} pts vs Competition Pool ({lift_b.get('competition_pool_hp_strike_rate', 144.8):.1f})")
+        with l2:
+            st.metric("2025-26 Top 10 Bowlers HP Economy Suppression", f"{lift_bw.get('top10_hp_economy', 7.95):.2f} RPO", f"-{lift_bw.get('suppression_savings_rpo', 0.93):.2f} RPO vs Competition Pool ({lift_bw.get('competition_pool_hp_economy', 8.88):.2f})")
+
+        matrix = annual_data.get("annual_net_value_matrix", {})
+        if "batters" in matrix and "bowlers" in matrix:
+            bat_m_df = pd.DataFrame(matrix["batters"])[["Rank", "Player", "2022", "2023", "2024", "2025", "2026"]]
+            bowl_m_df = pd.DataFrame(matrix["bowlers"])[["Rank", "Player", "2022", "2023", "2024", "2025", "2026"]]
+            st.markdown("##### Top 10 Batters Annual Net Value (Runs / 100 Balls):")
+            st.dataframe(bat_m_df, use_container_width=True, hide_index=True)
+            st.markdown("##### Top 10 Bowlers Annual Net Value (Runs / 100 Balls):")
+            st.dataframe(bowl_m_df, use_container_width=True, hide_index=True)
+
+    # 6. Appendix B: Bubble Contenders (Ranks 11-20)
+    bubble_data = val_sens_data.get("appendix_b_bubble_contenders", {})
+    if bubble_data:
+        st.markdown("---")
+        st.markdown("#### 🎯 Appendix B: Bubble Contenders (Ranks 11 to 20) & 2026 Active Screen")
+        st.caption("Scouting depth and contingency planning for Rajasthan Royals auction war room.")
+        bb_col1, bb_col2 = st.columns(2)
+        with bb_col1:
+            st.markdown("##### Batters Bubble (Ranks 11–20):")
+            if "batters_ranks_11_20" in bubble_data:
+                st.dataframe(pd.DataFrame(bubble_data["batters_ranks_11_20"])[["Rank", "Player", "PRR_Score", "PRR_CI_90", "P_Top_10_Pct", "HP_Deliveries", "IPL_HP_Share_Pct", "Active_2026_Balls"]], use_container_width=True, hide_index=True)
+        with bb_col2:
+            st.markdown("##### Bowlers Bubble (Ranks 11–20):")
+            if "bowlers_ranks_11_20" in bubble_data:
+                st.dataframe(pd.DataFrame(bubble_data["bowlers_ranks_11_20"])[["Rank", "Player", "Role", "PRR_Score", "PRR_CI_90", "P_Top_10_Pct", "HP_Deliveries", "IPL_HP_Share_Pct", "Active_2026_Balls"]], use_container_width=True, hide_index=True)
+        st.info("Active 2026 Screen: 20 of 20 players in official Top 10 are active in recent cycles. Screen cleanly filters retired veterans (e.g. Andre Russell 0 balls, Dinesh Karthik 0 balls in 2026).")
 
 # =============================================================================
 # FOOTER
