@@ -343,11 +343,11 @@ def build_complete_html(html_body):
 
 def export_pdf():
     print("=" * 80)
-    print("📄 EXPORTING PUBLICATION-GRADE PDF: SUBMISSION_RANKINGS_AND_REPORT.pdf")
+    print("EXPORTING PUBLICATION-GRADE PDF: SUBMISSION_RANKINGS_AND_REPORT.pdf")
     print("=" * 80)
 
     if not os.path.exists(MD_PATH):
-        print(f"❌ Error: {MD_PATH} does not exist.")
+        print(f"Error: {MD_PATH} does not exist.")
         sys.exit(1)
 
     print(f"1. Reading Markdown report: {MD_PATH}...")
@@ -366,11 +366,11 @@ def export_pdf():
     os.makedirs(os.path.dirname(HTML_PATH), exist_ok=True)
     with open(HTML_PATH, "w", encoding="utf-8") as f:
         f.write(full_html)
-    print(f"  ✓ Exported print HTML: {HTML_PATH} ({len(full_html):,} bytes)")
+    print(f"  Exported print HTML: {HTML_PATH} ({len(full_html):,} bytes)")
 
     browser_bin = find_browser_executable()
     if not browser_bin:
-        print("❌ Error: Microsoft Edge or Chrome executable not found in PATH or standard directories.")
+        print("Error: Microsoft Edge or Chrome executable not found in PATH or standard directories.")
         sys.exit(1)
 
     print(f"5. Rendering PDF via Headless Browser: {browser_bin}...")
@@ -397,19 +397,19 @@ def export_pdf():
     result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, timeout=60)
 
     if result.returncode != 0:
-        print(f"  ⚠️ Warning: Browser process returned code {result.returncode}")
+        print(f"  Warning: Browser process returned code {result.returncode}")
         if result.stderr:
             print(f"  Browser stderr: {result.stderr}")
 
     if os.path.exists(PDF_PATH) and os.path.getsize(PDF_PATH) > 0:
         size_kb = os.path.getsize(PDF_PATH) / 1024.0
-        print(f"\n✅ SUCCESS! SUBMISSION_RANKINGS_AND_REPORT.pdf generated successfully!")
+        print(f"\nSUCCESS! SUBMISSION_RANKINGS_AND_REPORT.pdf generated successfully!")
         print(f"   Path: {PDF_PATH}")
         print(f"   Size: {size_kb:.1f} KB")
         print("=" * 80)
         return True
     else:
-        print(f"\n❌ Error: Failed to produce non-empty PDF at {PDF_PATH}")
+        print(f"\nError: Failed to produce non-empty PDF at {PDF_PATH}")
         sys.exit(1)
 
 

@@ -96,7 +96,7 @@ def generate_chart1_batters():
     out_path = os.path.join(CHARTS_DIR, "chart1_batters_ci.png")
     plt.savefig(out_path, dpi=300, bbox_inches="tight")
     plt.close()
-    print(f"  ✓ Saved {out_path}")
+    print(f"  Saved {out_path}")
 
 
 def generate_chart2_bowlers():
@@ -158,7 +158,7 @@ def generate_chart2_bowlers():
     out_path = os.path.join(CHARTS_DIR, "chart2_bowlers_ci.png")
     plt.savefig(out_path, dpi=300, bbox_inches="tight")
     plt.close()
-    print(f"  ✓ Saved {out_path}")
+    print(f"  Saved {out_path}")
 
 
 def generate_chart3_regime_and_ablation():
@@ -254,7 +254,7 @@ def generate_chart3_regime_and_ablation():
     out_path = os.path.join(CHARTS_DIR, "chart3_regime_and_ablation.png")
     plt.savefig(out_path, dpi=300, bbox_inches="tight")
     plt.close()
-    print(f"  ✓ Saved {out_path}")
+    print(f"  Saved {out_path}")
 
 
 def generate_chart4_season_heatmap():
@@ -324,19 +324,19 @@ def generate_chart4_season_heatmap():
     out_path = os.path.join(CHARTS_DIR, "chart4_season_heatmap.png")
     plt.savefig(out_path, dpi=300, bbox_inches="tight")
     plt.close()
-    print(f"  ✓ Saved {out_path}")
+    print(f"  Saved {out_path}")
 
 
 def main():
     print("=" * 60)
-    print("🎨 GENERATING PUBLICATION-GRADE CHARTS FOR EXECUTIVE BRIEFING")
+    print("GENERATING PUBLICATION-GRADE CHARTS FOR EXECUTIVE BRIEFING")
     print("=" * 60)
     generate_chart1_batters()
     generate_chart2_bowlers()
     generate_chart3_regime_and_ablation()
     generate_chart4_season_heatmap()
     print("=" * 60)
-    print("✅ ALL 4 PUBLICATION CHARTS GENERATED SUCCESSFULLY!")
+    print("ALL 4 PUBLICATION CHARTS GENERATED SUCCESSFULLY")
     print("=" * 60)
 
 

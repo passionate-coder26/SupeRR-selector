@@ -38,7 +38,7 @@ from src.config import (
 # =============================================================================
 st.set_page_config(
     page_title="SupeRR Selector S2 | Pressure Reliability Engine",
-    page_icon="🏏",
+    page_icon=None,
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -214,7 +214,7 @@ st.markdown(
         <div style="display: flex; justify-content: space-between; align-items: center;">
             <div>
                 <h1 style="color: white; margin: 0; font-size: 1.85rem; font-weight: 800;">
-                    🏏 THE PINK CANVAS OS — SUPERR SELECTOR SEASON 2
+                    THE PINK CANVAS OS | RAJASTHAN ROYALS
                 </h1>
                 <p style="color: {ACCENT_GOLD}; margin: 6px 0 0 0; font-size: 1.05rem; font-weight: 600;">
                     Official Challenge: Identify the Most Reliable Players Under Pressure
@@ -238,7 +238,7 @@ st.markdown(
 # =============================================================================
 with st.sidebar:
     st.image("https://upload.wikimedia.org/wikipedia/en/thumb/6/60/Rajasthan_Royals_Logo.svg/240px-Rajasthan_Royals_Logo.svg.png", width=120)
-    st.markdown("### 🎛️ Architecture Status")
+    st.markdown("### Architecture Status")
 
     l_star = emp_params.get("leverage_gmm_crossover_threshold", 0.9927)
     hp_share = emp_params.get("high_pressure_share_pct", 36.67)
@@ -256,7 +256,7 @@ with st.sidebar:
         unsafe_allow_html=True
     )
 
-    st.markdown("### 📊 Empirical Fast Facts")
+    st.markdown("### Empirical Fast Facts")
     st.metric("Total Deliveries Analyzed", "200,999")
     st.metric("High-Pressure Deliveries", f"73,923 ({hp_share:.1f}%)")
     st.metric("Ridge Regularization α*", f"{ridge_alpha:.1f}")
@@ -267,17 +267,17 @@ with st.sidebar:
 # 5. DASHBOARD TABS
 # =============================================================================
 tab1, tab2, tab3, tab4 = st.tabs([
-    "📐 1. Pressure Definition & ML Architecture",
-    "🏏 2. Top 10 Batters Under Pressure",
-    "🎯 3. Top 10 Bowlers Under Pressure",
-    "🏟️ 4. RR Venues & Sensitivity Analysis"
+    "1. Pressure Definition & ML Architecture",
+    "2. Top 10 Batters Under Pressure",
+    "3. Top 10 Bowlers Under Pressure",
+    "4. RR Venues & Sensitivity Analysis"
 ])
 
 # -----------------------------------------------------------------------------
 # TAB 1: PRESSURE DEFINITION & ML ARCHITECTURE
 # -----------------------------------------------------------------------------
 with tab1:
-    st.markdown("### 🤖 Supervised Machine Learning Models & Cross-Validation Proof")
+    st.markdown("### Supervised Machine Learning Models & Cross-Validation Proof")
     st.markdown(
         """
         To guarantee enterprise-grade sports analytics credibility, **The Pink Canvas OS** embeds **3 Supervised Machine Learning models (`HistGradientBoosting`)** 
@@ -358,7 +358,7 @@ with tab1:
 
     # Feature Importance Chart
     if not feat_df.empty:
-        st.markdown("#### 📊 Permutation Feature Importances (Supervised Win Probability Model)")
+        st.markdown("#### Permutation Feature Importances (Supervised Win Probability Model)")
         feat_plot = feat_df.copy()
         if "importance_mean" in feat_plot.columns and "Importance" not in feat_plot.columns:
             feat_plot["Importance"] = feat_plot["importance_mean"]
@@ -384,61 +384,54 @@ with tab1:
         st.plotly_chart(fig_feat, use_container_width=True)
 
     st.markdown("---")
-    st.markdown("### 🔬 Option B: Pure First-Principles Econometric & ML Pipeline (Zero Manual Constants)")
+    st.markdown("### Option B: Pure First-Principles Econometric & ML Pipeline (Zero Manual Constants)")
     st.markdown(
-        r"""
-        **The Pink Canvas OS** replaces all arbitrary thresholds, fixed tier multipliers, and manual economy cutoffs with a self-governing **4-Stage Econometric & ML Pipeline**:
-        1. **Information-Theoretic Leverage ($L_i$):** Derived from outcome-probability-weighted counterfactual win probability dispersion $\sigma_{\text{WP}, i} = \sqrt{\sum p_k (\Delta \text{WP}_k)^2}$ with regime separation via **2-Component Gaussian Mixture Model** ($L^*_{\text{GMM}} = 0.9927$).
-        2. **Endogenous Wicket Value ($C_{\text{wkt}, i}$):** Predicted dynamically per delivery using an **ML Remaining-Runs Regressor** ($\bar{C}_{\text{wkt}} = 4.55$ runs, $\lambda_{\text{wkt}} = 1.3176$).
-        3. **Simultaneous Bipartite Ridge Network ($\alpha^* = 500.0$):** Solves joint batter $\hat{\theta}_{\text{bat}}$ and bowler $\hat{\theta}_{\text{bowl}}$ ratings across 200,999 delivery interactions via 5-Fold GroupKFold CV.
-        4. **Hierarchical Random-Slopes ANOVA Shrinkage & PCA Composite:** One-way random-effects ANOVA learns shrinkage $K$ directly ($K_{\text{bat,base}}=200.30, K_{\text{bat,HP}}=222.55$; $K_{\text{bowl}}=500.0$), with de-attenuated OLS clutch slopes ($\hat{\rho}_{\text{bat}}=0.2000, \hat{\rho}_{\text{bowl}}=0.3969$) and PCA(1) composite weighting.
+        """
+        **The Pink Canvas OS** replaces all arbitrary thresholds, fixed tier multipliers, and manual economy cutoffs with a self-governing **4-Stage Econometric & Machine Learning Engine**:
         """
     )
 
     c1, c2 = st.columns(2)
     with c1:
-        st.markdown(
-            f"""
-            <div class="player-card" style="border-left: 4px solid {ROYALS_PINK};">
-                <h4 style="color: {ROYALS_PINK}; margin-top: 0;">1️⃣ GMM Leverage Crossover & ML Wicket Pricing</h4>
-                <ul>
-                    <li><b>Counterfactual Outcomes:</b> Evaluates live $\\widehat{{\\text{{WP}}}}$ on Dot ($+0$), Single ($+1$), Boundary ($+4$), and Dismissal.</li>
-                    <li><b>WP Dispersion:</b> $\\sigma_{{\\text{{WP}}, i}} = \\sqrt{{ p_{{\\text{{dot}}}}(\\Delta \\text{{WP}}_{{\\text{{dot}}}})^2 + p_1(\\Delta \\text{{WP}}_1)^2 + p_{{\\text{{bnd}}}}(\\Delta \\text{{WP}}_4)^2 + \\mathbb{{E}}[W](\\Delta \\text{{WP}}_{{\\text{{wkt}}}})^2 }}$</li>
-                    <li><b>GMM Regime Threshold:</b> 2-Component GMM yields $L^*_{{\\text{{GMM}}}} = {l_star:.4f}$ ({hp_share:.1f}% crunch volume).</li>
-                    <li><b>ML Wicket Cost:</b> $C_{{\\text{{wkt}}, i}} = \\mathbb{{E}}[R_{{\\text{{rem}}}}(s_i)] - \\mathbb{{E}}[R_{{\\text{{rem}}}}(s_i \\mid W+1)]$ (Mean: {emp_params.get('wicket_valuation_C_wkt', {}).get('mean', 4.55):.2f} runs).</li>
-                </ul>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+        st.markdown("#### Stage 1: Information-Theoretic Leverage & GMM Crossover")
+        st.markdown("**Continuous Win Probability Dispersion:** Evaluates live dispersion across Dot, Single, Boundary, and Dismissal:")
+        st.latex(r"\sigma_{\text{WP}, i} = \sqrt{ p_{\text{dot}}(\Delta \text{WP}_{\text{dot}})^2 + p_1(\Delta \text{WP}_1)^2 + p_4(\Delta \text{WP}_4)^2 + \mathbb{E}[W](\Delta \text{WP}_{\text{wkt}})^2 }")
+        st.markdown(rf"**GMM Regime Separation:** Fitted on $\log(1 + L_i)$, yielding crossover threshold **$L^* = {l_star:.4f}$** (top {hp_share:.1f}% deliveries).")
+
+        st.markdown("#### Stage 2: Endogenous Wicket Valuation & Matchup Ridge")
+        st.markdown("**ML Wicket Depletion Cost ($C_{\\text{wkt}, i}$):** Run-expectancy drop when a wicket falls at current state:")
+        st.latex(r"C_{\text{wkt}, i} = \max\left(1.0,\; \widehat{R}_{\text{rem}}(b-1, W) - \widehat{R}_{\text{rem}}(b-1, \min(9, W+1))\right)")
+        st.markdown(rf"**Variance Scaling & Ridge Regularization:** Wicket impact scaled via $\lambda = {emp_params.get('bowler_wicket_variance_ratio_lambda', 1.3176):.4f}$. Bipartite network regularization selected at **$\alpha^* = {emp_params.get('ridge_regularization_alpha_star', 500.0):.1f}$** via 5-Fold GroupKFold CV.")
 
     with c2:
-        st.markdown(
-            f"""
-            <div class="player-card" style="border-left: 4px solid {ACCENT_CYAN};">
-                <h4 style="color: {ACCENT_CYAN}; margin-top: 0;">2️⃣ ANOVA Shrinkage, OLS Elevation & PCA</h4>
-                <ul>
-                    <li><b>ANOVA Shrinkage:</b> $K = \\sigma^2_{{\\text{{within}}}} / \\sigma^2_{{\\text{{between}}}}$ ($K_{{\\text{{bat}}}} = 222.55, K_{{\\text{{bowl}}}} = 500.0$).</li>
-                    <li><b>De-attenuated Elevation:</b> $\\hat{{\\Delta}}^{{\\text{{EB}}}}_p = \\frac{{N_{{\\text{{HP}}}}}}{{N_{{\\text{{HP}}}} + K}} (\\bar{{v}}_{{\\text{{HP}}}} - \\hat{{\\rho}} \\bar{{v}}_{{\\text{{base}}}})$ ($\\hat{{\\rho}}_{{\\text{{bat}}}} = 0.2000, \\hat{{\\rho}}_{{\\text{{bowl}}}} = 0.3969$).</li>
-                    <li><b>Method-of-Moments Beta Prior:</b> Match consistency $C_p = \\frac{{m_{{\\text{{pos}}}} + \\alpha_0}}{{M_{{\\text{{HP}}}} + \\nu_0}}$ with $\\nu_0$ learned empirically.</li>
-                    <li><b>PCA(1) Weighting:</b> Unsupervised composite loadings on $[Z(\\mu_{{\\text{{HP}}}}), Z(\\alpha), Z(\\Delta), Z(C)] - 0.50 Z(\\text{{SE}}_{{\\text{{match}}}})$.</li>
-                </ul>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+        st.markdown("#### Stage 3: ANOVA Empirical Bayes Shrinkage & De-Attenuated OLS")
+        st.markdown("**ANOVA Shrinkage Parameter ($K$):** One-Way Random Effects ratio of within-player noise to between-player skill:")
+        st.latex(r"K = \frac{\hat{\sigma}^2_{\text{within}}}{\hat{\sigma}^2_{\text{between}}} \implies K_{\text{bat}} = 222.55,\quad K_{\text{bowl}} = 500.00")
+        st.markdown(r"**De-Attenuated Clutch Elevation ($\hat{\Delta}_p^{\text{EB}}$):** Corrects errors-in-variables attenuation:")
+        st.latex(r"\hat{\Delta}_p^{\text{EB}} = \left(\frac{N_{\text{HP}, p}}{N_{\text{HP}, p} + K_{\text{HP}}}\right) \left(\bar{v}_{\text{HP}, p} - \hat{\rho} \cdot \bar{v}_{\text{base}, p}\right)")
+        r_bat_val = emp_params.get('unconstrained_ols_slopes', {}).get('rho_bat', 0.2000)
+        r_bowl_val = emp_params.get('unconstrained_ols_slopes', {}).get('rho_bowl', 0.3969)
+        st.markdown(rf"**Lord's Paradox Resolution:** $\hat{{\rho}}_{{\text{{bat}}}} = {r_bat_val:.4f}$ and $\hat{{\rho}}_{{\text{{bowl}}}} = {r_bowl_val:.4f}$ preserve elite baselines.")
+
+        st.markdown("#### Stage 4: PCA Composite PRR & Normal CDF Mapping")
+        st.markdown("**Unsupervised Principal Component Analysis:** Weights the four orthogonal performance dimensions:")
+        st.latex(r"\text{PRR\_Raw}_p = w_1 Z(\hat{\mu}_{\text{HP}}^{\text{EB}}) + w_2 Z(\hat{\alpha}_p^{\text{EB}}) + w_3 Z(\hat{\Delta}_p^{\text{EB}}) + w_4 Z(C_p) - 0.50 \cdot Z(\text{SE}_{\text{match}})")
+        st.markdown("**Standard Normal Mapping:** Calibrated to active specialist population percentiles:")
+        st.latex(r"\text{PRR}_p = \Phi\left(\frac{\text{PRR\_Raw}_p - \mu_{\text{pool}}}{\sigma_{\text{pool}}}\right) \times 100")
+
+    st.markdown("---")
 
 # -----------------------------------------------------------------------------
 # TAB 2: TOP 10 BATTERS UNDER PRESSURE
 # -----------------------------------------------------------------------------
 with tab2:
-    st.markdown("### 🏆 Top 10 Batters Under Pressure (Official Submission Ranks 1 to 10)")
+    st.markdown("### Top 10 Batters Under Pressure (Official Submission Ranks 1 to 10)")
     st.caption("Ranked by Pure First-Principles Pressure Reliability Rating (PRR_Final). Evaluated across 200,999 deliveries via 4-Stage Probabilistic & Econometric Pipeline with data-driven Q60 volume percentiles and dual situational par outperformance. Zero manual constants.")
 
     top10_bat = bat_df.head(10).copy()
 
     # Dropdown Selection Table for Unstop
-    st.markdown("#### 📋 Official Submission Table (Rank 1 to 10)")
+    st.markdown("#### Official Submission Table (Ranks 1 to 10)")
     display_bat_cols = ["Rank", "player_name", "total_balls", "HP_Deliveries", "M_HP", "Base_SR", "HP_SR", "Delta_Clutch", "Consistency_Pct", "PRR_CI_90_Low", "PRR_CI_90_High", "P_Top_10_Pct", "IPL_HP_Share_Pct", "PRR_Score"]
     display_bat_table = top10_bat[[c for c in display_bat_cols if c in top10_bat.columns]].copy()
     display_bat_table["90% CI"] = display_bat_table.apply(lambda r: f"[{r.get('PRR_CI_90_Low', 0.0):.1f}, {r.get('PRR_CI_90_High', 100.0):.1f}]", axis=1)
@@ -448,13 +441,13 @@ with tab2:
     display_bat_table = display_bat_table[[c for c in col_order_bat if c in display_bat_table.columns]]
     display_bat_table.columns = [
         "Unstop Rank", "Player Name", "Total Balls", "HP Balls (L_i >= L*)", "HP Matches", "Base SR", "HP SR",
-        "Clutch Elevation (Δ_EB)", "Consistency %", "90% CI", "P(Top-10)", "IPL HP %", "PRR Score"
+        "Clutch Elevation (Delta_EB)", "Consistency %", "90% CI", "P(Top-10)", "IPL HP %", "PRR Score"
     ]
     st.dataframe(
         display_bat_table.style.format({
             "Base SR": "{:.1f}",
             "HP SR": "{:.1f}",
-            "Clutch Elevation (Δ_EB)": "{:+.2f}",
+            "Clutch Elevation (Delta_EB)": "{:+.2f}",
             "Consistency %": "{:.1f}%",
             "P(Top-10)": "{:.1f}%",
             "IPL HP %": "{:.1f}%",
@@ -465,7 +458,7 @@ with tab2:
     )
 
     st.markdown("---")
-    st.markdown("#### 🔍 Interactive Batter Deep-Dive Explorer")
+    st.markdown("#### Interactive Batter Deep-Dive Explorer")
 
     selected_bat_name = st.selectbox(
         "Select a Batter to inspect situational breakdown:",
@@ -486,7 +479,7 @@ with tab2:
     with bd1:
         st.metric("PRR Score & Rank", f"{selected_bat['PRR_Score']:.2f} / 100", f"Rank #{int(selected_bat['Rank'])}")
     with bd2:
-        st.metric("High-Pressure Strike Rate", f"{selected_bat['HP_SR']:.1f}", f"{delta_bat_val:+.2f} Clutch Elevation (Δ_EB)")
+        st.metric("High-Pressure Strike Rate", f"{selected_bat['HP_SR']:.1f}", f"{delta_bat_val:+.2f} Clutch Elevation (Delta_EB)")
     with bd3:
         st.metric("Beta-Binomial Consistency", f"{selected_bat['Consistency_Pct']:.1f}%", f"Match Uncertainty SE: {selected_bat.get('SE_match', 0.0):.2f}")
     with bd4:
@@ -495,7 +488,7 @@ with tab2:
         st.metric("Volume & IPL Focus", f"{int(hp_balls_b):,} HP Balls", f"{ipl_b:.1f}% IPL HP Share")
 
     # Scatter Plot: Baseline vs HP Strike Rate
-    st.markdown("#### 📊 Baseline vs. High-Pressure Strike Rate (Clutch Elevators vs. Decliners)")
+    st.markdown("#### Baseline vs. High-Pressure Strike Rate (Clutch Elevators vs. Decliners)")
     fig_bat_scatter = px.scatter(
         bat_df,
         x="SR_Base",
@@ -533,13 +526,13 @@ with tab2:
 # TAB 3: TOP 10 BOWLERS UNDER PRESSURE
 # -----------------------------------------------------------------------------
 with tab3:
-    st.markdown("### 🎯 Top 10 Bowlers Under Pressure (Official Submission Ranks 1 to 10)")
+    st.markdown("### Top 10 Bowlers Under Pressure (Official Submission Ranks 1 to 10)")
     st.caption("Ranked by Pure First-Principles Pressure Reliability Rating (PRR_Final). Evaluated across 200,999 deliveries with pace/spin conditioned situational expectation par and separate cohort standardization. 5 Pace & 5 Spin. Zero manual economy cutoffs.")
 
     top10_bowl = bowl_df.head(10).copy()
 
     # Dropdown Selection Table for Unstop
-    st.markdown("#### 📋 Official Submission Table (Rank 1 to 10)")
+    st.markdown("#### Official Submission Table (Ranks 1 to 10)")
     display_bowl_cols = ["Rank", "player_name", "pace_or_spin", "total_balls", "HP_Deliveries", "M_HP", "Base_Economy", "HP_Economy", "Delta_Clutch", "Consistency_Pct", "PRR_CI_90_Low", "PRR_CI_90_High", "P_Top_10_Pct", "IPL_HP_Share_Pct", "PRR_Score"]
     display_bowl_table = top10_bowl[[c for c in display_bowl_cols if c in top10_bowl.columns]].copy()
     display_bowl_table["90% CI"] = display_bowl_table.apply(lambda r: f"[{r.get('PRR_CI_90_Low', 0.0):.1f}, {r.get('PRR_CI_90_High', 100.0):.1f}]", axis=1)
@@ -549,13 +542,13 @@ with tab3:
     display_bowl_table = display_bowl_table[[c for c in col_order_bowl if c in display_bowl_table.columns]]
     display_bowl_table.columns = [
         "Unstop Rank", "Player Name", "Role", "Total Balls", "HP Balls (L_i >= L*)", "HP Matches", "Base Econ", "HP Econ",
-        "Clutch Elevation (Δ_EB)", "Consistency %", "90% CI", "P(Top-10)", "IPL HP %", "PRR Score"
+        "Clutch Elevation (Delta_EB)", "Consistency %", "90% CI", "P(Top-10)", "IPL HP %", "PRR Score"
     ]
     st.dataframe(
         display_bowl_table.style.format({
             "Base Econ": "{:.2f}",
             "HP Econ": "{:.2f}",
-            "Clutch Elevation (Δ_EB)": "{:+.2f}",
+            "Clutch Elevation (Delta_EB)": "{:+.2f}",
             "Consistency %": "{:.1f}%",
             "P(Top-10)": "{:.1f}%",
             "IPL HP %": "{:.1f}%",
@@ -566,7 +559,7 @@ with tab3:
     )
 
     st.markdown("---")
-    st.markdown("#### 🔍 Interactive Bowler Deep-Dive Explorer")
+    st.markdown("#### Interactive Bowler Deep-Dive Explorer")
 
     selected_bowl_name = st.selectbox(
         "Select a Bowler to inspect situational breakdown:",
@@ -587,7 +580,7 @@ with tab3:
     with bld1:
         st.metric("PRR Score & Rank", f"{selected_bowl['PRR_Score']:.2f} / 100", f"Rank #{int(selected_bowl['Rank'])}")
     with bld2:
-        st.metric("High-Pressure Economy", f"{selected_bowl['HP_Economy']:.2f}", f"{delta_bowl_val:+.2f} Clutch Elevation (Δ_EB)")
+        st.metric("High-Pressure Economy", f"{selected_bowl['HP_Economy']:.2f}", f"{delta_bowl_val:+.2f} Clutch Tightening (Delta_EB)")
     with bld3:
         st.metric("Beta-Binomial Consistency", f"{selected_bowl['Consistency_Pct']:.1f}%", f"Match Uncertainty SE: {selected_bowl.get('SE_match', 0.0):.2f}")
     with bld4:
@@ -596,7 +589,7 @@ with tab3:
         st.metric("Volume & IPL Focus", f"{int(hp_balls_bw):,} HP Balls", f"{ipl_bw:.1f}% IPL HP Share")
 
     # Scatter Plot: Baseline vs HP Economy
-    st.markdown("#### 📊 Baseline vs. High-Pressure Economy (Tighteners vs. Leakers)")
+    st.markdown("#### Baseline vs. High-Pressure Economy (Tighteners vs. Leakers)")
     fig_bowl_scatter = px.scatter(
         bowl_df,
         x="Econ_Base",
@@ -634,7 +627,7 @@ with tab3:
 # TAB 4: RR VENUES & SENSITIVITY ANALYSIS
 # -----------------------------------------------------------------------------
 with tab4:
-    st.markdown("### 🏟️ Rajasthan Royals Home Venues Micro-Climates & Model Robustness")
+    st.markdown("### Rajasthan Royals Home Venues Micro-Climates & Model Robustness")
     
     vc1, vc2 = st.columns(2)
     with vc1:
@@ -670,7 +663,7 @@ with tab4:
         )
 
     st.markdown("---")
-    st.markdown("#### 🔬 8-Way Methodological Ablation & Baseline Benchmark Table")
+    st.markdown("#### 8-Way Methodological Ablation & Baseline Benchmark Table")
     st.caption("Re-computed across all 200,999 deliveries to benchmark our official 4-stage ML pipeline against 7 alternative specifications.")
 
     abl_list = val_sens_data.get("methodological_ablation_and_benchmarks", val_sens_data.get("leverage_threshold_sensitivity", []))
@@ -694,7 +687,7 @@ with tab4:
         st.info("Ablation data will be rendered upon running the analytics engine.")
 
     st.markdown("---")
-    st.markdown("#### ⚡ Post-Hoc Regime Validation: Live Win Probability Swings (2x2x2)")
+    st.markdown("#### Post-Hoc Regime Validation: Live Win Probability Swings (2x2x2)")
     st.caption("Proving that GMM L* = 0.9927 isolates deliveries that swing live match outcome probability by 3.06x in the 1st innings and 8.36x in the chase.")
 
     post_hoc = val_sens_data.get("post_hoc_regime_validation_2x2x2", {})
@@ -702,7 +695,7 @@ with tab4:
         ph_df = pd.DataFrame(post_hoc["table"])[[
             "innings_name", "regime", "deliveries", "sr", "econ", "dot_pct", "wicket_risk_pct", "mean_abs_delta_wp_pts"
         ]]
-        ph_df.columns = ["Innings Phase", "Regime", "Legal Balls", "SR", "Economy", "Dot %", "Wicket Risk %", "Mean |ΔWP| (pts)"]
+        ph_df.columns = ["Innings Phase", "Regime", "Legal Balls", "SR", "Economy", "Dot %", "Wicket Risk %", "Mean |Delta WP| (pts)"]
         st.dataframe(ph_df, use_container_width=True, hide_index=True)
 
         swings = post_hoc.get("live_win_probability_swing_multipliers", {})
@@ -713,7 +706,7 @@ with tab4:
             st.metric("Chase (2nd Inn) Crunch Win-Swing Multiplier", f"{swings.get('innings_2_multiplier', 8.36):.2f}x", "6.52 pts vs 0.78 pts Ordinary")
 
     st.markdown("---")
-    st.markdown("#### 🧹 Forensic Data Engineering Hygiene & 3-Tier Competitive Scoring Environments")
+    st.markdown("#### Forensic Data Engineering Hygiene & 3-Tier Competitive Scoring Environments")
     st.caption("Auditing 200,999 raw records, 3-way run attribution, and cross-competition scoring par levels.")
 
     hygiene = val_sens_data.get("data_engineering_hygiene_audit", {})
@@ -734,7 +727,7 @@ with tab4:
             st.dataframe(pd.DataFrame(envs)[["environment", "matches", "avg_first_innings_par", "avg_rpo", "description"]], use_container_width=True, hide_index=True)
 
     st.markdown("---")
-    st.markdown("#### ⏳ Temporal Out-of-Sample Validation (2022–2024 Train vs. 2025–2026 Test)")
+    st.markdown("#### Temporal Out-of-Sample Validation (2022–2024 Train vs. 2025–2026 Test)")
     st.caption("Strict time-split validation: All ML expectation models trained on 2022–2024 matches (115,738 balls) and evaluated on 2025–2026 matches (77,547 balls).")
 
     temp_data = val_sens_data.get("temporal_out_of_sample_validation", {})
@@ -784,7 +777,7 @@ with tab4:
         persist = temp_data.get("player_high_pressure_skill_persistence", {})
         bat_p = persist.get("batters", {})
         bowl_p = persist.get("bowlers", {})
-        st.markdown("##### 📈 Multi-Year Player Skill Persistence (Residual Correlation 2022–2024 vs 2025–2026)")
+        st.markdown("##### Multi-Year Player Skill Persistence (Residual Correlation 2022–2024 vs 2025–2026)")
         pc1, pc2 = st.columns(2)
         with pc1:
             st.metric(
@@ -803,7 +796,7 @@ with tab4:
     annual_data = val_sens_data.get("season_by_season_consistency_and_lift", {})
     if annual_data:
         st.markdown("---")
-        st.markdown("#### 📅 Season-by-Season Net Value Consistency (2022–2026) & 2025–2026 Lift")
+        st.markdown("#### Season-by-Season Net Value Consistency (2022–2026) & 2025–2026 Lift")
         lift_b = annual_data.get("out_of_time_2025_2026_cohort_lift", {}).get("batters", {})
         lift_bw = annual_data.get("out_of_time_2025_2026_cohort_lift", {}).get("bowlers", {})
         l1, l2 = st.columns(2)
@@ -825,7 +818,7 @@ with tab4:
     bubble_data = val_sens_data.get("appendix_b_bubble_contenders", {})
     if bubble_data:
         st.markdown("---")
-        st.markdown("#### 🎯 Appendix B: Bubble Contenders (Ranks 11 to 20) & 2026 Active Screen")
+        st.markdown("#### Appendix B: Bubble Contenders (Ranks 11 to 20) & 2026 Active Screen")
         st.caption("Scouting depth and contingency planning for Rajasthan Royals auction war room.")
         bb_col1, bb_col2 = st.columns(2)
         with bb_col1:

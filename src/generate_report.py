@@ -52,13 +52,13 @@ COLOR_MUTED = RGBColor(148, 163, 184)
 
 def generate_markdown_report(top_bat, top_bowl, ml_metrics, feat_df, emp_params, top_bat_opt_a=None, top_bowl_opt_a=None, val_sens_data=None):
     """Generate the ultra-compact, visual Executive Briefing report (~6-7 pages with embedded publication charts)."""
-    print("📝 Generating publication-grade SUBMISSION_RANKINGS_AND_REPORT.md...")
+    print("Generating publication-grade SUBMISSION_RANKINGS_AND_REPORT.md...")
     lines = []
 
     # =========================================================================
     # PAGE 1: TITLE BANNER, EXECUTIVE SUMMARY & TOP 10 BATTERS
     # =========================================================================
-    lines.append("# 🏏 Rajasthan Royals SupeRR Selector Season 2 — Round 1 Methodology Briefing")
+    lines.append("# Rajasthan Royals SupeRR Selector Season 2 — Round 1 Methodology Briefing")
     lines.append("## Identifying the Most Reliable Players Under Pressure in T20 Cricket (2022–2026)")
     lines.append(f"**Submission Date:** {datetime.now().strftime('%B %d, %Y')} | **Platform:** The Pink Canvas OS | **Deliverables:** Streamlit App & Publication-Grade PDF")
     lines.append("**Dataset:** Official 2022–2026 Historical Relational Data Pack (**200,999 Deliveries**, **867 Matches**, **7,714 Wides Reconciled**)")
@@ -67,7 +67,7 @@ def generate_markdown_report(top_bat, top_bowl, ml_metrics, feat_df, emp_params,
     lines.append("---")
     lines.append("")
 
-    lines.append("## 🏆 1. EXECUTIVE SUMMARY: OFFICIAL TOP 10 RANKINGS")
+    lines.append("## 1. EXECUTIVE SUMMARY: OFFICIAL TOP 10 RANKINGS")
     lines.append("")
     lines.append("Our pure, self-governing **4-Stage Probabilistic & Econometric Machine Learning Pipeline** eliminates all manual thresholds, arbitrary weights, and fixed penalties. Every parameter is learned directly from the 200,999 deliveries:")
     lines.append("")
@@ -114,7 +114,7 @@ def generate_markdown_report(top_bat, top_bowl, ml_metrics, feat_df, emp_params,
     # =========================================================================
     lines.append("<div style=\"page-break-before: always;\"></div>")
     lines.append("")
-    lines.append("## 🎯 2. IPL 2027 AUCTION ACTIONABILITY & ROSTER STRATEGY FOR RAJASTHAN ROYALS")
+    lines.append("## 2. IPL 2027 AUCTION ACTIONABILITY & ROSTER STRATEGY FOR RAJASTHAN ROYALS")
     lines.append("")
     lines.append("> **Context:** The official dataset contains no external contract or retention flags. While our models evaluate the full global pool with pure mathematical objectivity, we categorize the Top 10 (and Top 15 bubble) into an executive 3-tier auction actionability matrix for Rajasthan Royals:")
     lines.append("")
@@ -135,7 +135,7 @@ def generate_markdown_report(top_bat, top_bowl, ml_metrics, feat_df, emp_params,
     lines.append("---")
     lines.append("")
 
-    lines.append("## ⚙️ 3. THE 4-STEP ENGINE: PROCESS FLOW & LEARNED PARAMETERS")
+    lines.append("## 3. THE 4-STEP ENGINE: PROCESS FLOW & LEARNED PARAMETERS")
     lines.append("")
     l_star = emp_params.get('leverage_gmm_crossover_threshold', 0.9927)
     hp_pct = emp_params.get('high_pressure_share_pct', 36.67)
@@ -178,7 +178,7 @@ def generate_markdown_report(top_bat, top_bowl, ml_metrics, feat_df, emp_params,
     lines.append("---")
     lines.append("")
 
-    lines.append("## 🔬 4. EMPIRICAL VALIDATION, SENSITIVITY & FORENSIC AUDIT")
+    lines.append("## 4. EMPIRICAL VALIDATION, SENSITIVITY & FORENSIC AUDIT")
     lines.append("")
     lines.append("### A. 8-Way Methodological Ablation & Baseline Benchmark Table")
     lines.append("To prove rankings are invariant to modeling choices, we benchmarked the pipeline against 7 alternative specifications across all 200,999 deliveries:")
@@ -234,9 +234,9 @@ def generate_markdown_report(top_bat, top_bowl, ml_metrics, feat_df, emp_params,
     lines.append("")
     lines.append("| Machine Learning Model | Evaluation Metric | 2022–2024 Train (In-Sample) | 2025–2026 Test (Out-of-Time) | Generalization Verdict |")
     lines.append("|:-----------------------|:------------------|:---------------------------:|:----------------------------:|:-----------------------|")
-    lines.append("| **Model 1: Win Probability** | ROC-AUC / Brier Score | 0.8657 / 0.1488 | **0.8554 / 0.1596** | ✅ Zero overfitting; excellent out-of-time calibration. |")
-    lines.append("| **Model 2: Expected Runs** | RMSE / MAE (Runs/ball) | 1.7161 / 1.2965 | **1.7604 / 1.3415** | ✅ Stable situational run expectation across match eras. |")
-    lines.append("| **Model 3: Expected Dismissal** | ROC-AUC / Brier Score | 0.6096 / 0.0524 | **0.6006 / 0.0531** | ✅ Highly calibrated wicket baseline (~5.3% base rate). |")
+    lines.append("| **Model 1: Win Probability** | ROC-AUC / Brier Score | 0.8657 / 0.1488 | **0.8554 / 0.1596** | Pass: Zero overfitting; excellent out-of-time calibration. |")
+    lines.append("| **Model 2: Expected Runs** | RMSE / MAE (Runs/ball) | 1.7161 / 1.2965 | **1.7604 / 1.3415** | Pass: Stable situational run expectation across match eras. |")
+    lines.append("| **Model 3: Expected Dismissal** | ROC-AUC / Brier Score | 0.6096 / 0.0524 | **0.6006 / 0.0531** | Pass: Highly calibrated wicket baseline (~5.3% base rate). |")
     lines.append("")
     lines.append("- **Multi-Year Skill Persistence:** Inter-season correlation across active players confirms high-pressure reliability is a repeatable talent: Batters **$r = 0.3758$** ($p < 0.0001$), Bowlers **$r = 0.3130$** ($p < 0.0001$).")
     lines.append("- **Out-of-Time Cohort Lift (2025–2026 Test Period):** Top 10 Batters delivered **161.4 HP SR** vs. pool average 144.8 (**+16.6 pts lift**); Top 10 Bowlers held **7.95 HP Econ** vs. pool average 8.88 (**-0.93 RPO suppression**).")
@@ -249,7 +249,7 @@ def generate_markdown_report(top_bat, top_bowl, ml_metrics, feat_df, emp_params,
     # =========================================================================
     lines.append("<div style=\"page-break-before: always;\"></div>")
     lines.append("")
-    lines.append("## 📋 5. APPENDIX: BUBBLE CONTENDERS (RANKS 11–20) & 2026 ACTIVE SCREEN")
+    lines.append("## 5. APPENDIX: BUBBLE CONTENDERS (RANKS 11–20) & 2026 ACTIVE SCREEN")
     lines.append("")
     lines.append("| Category | Rank | ID | Player Name | Role | PRR | 90% CI | $P(\\text{Top-10})$ | HP Balls | IPL % | 2026 Balls | Strategic Scouting Profile |")
     lines.append("|:---------|:----:|:--:|:------------|:----:|:---:|:------:|:--------------------:|:--------:|:-----:|:----------:|:---------------------------|")
@@ -269,12 +269,12 @@ def generate_markdown_report(top_bat, top_bowl, ml_metrics, feat_df, emp_params,
 
     with open(MD_REPORT_PATH, "w", encoding="utf-8") as f:
         f.write("\n".join(lines))
-    print(f"✅ Saved publication-grade report to {MD_REPORT_PATH}")
+    print(f"Saved publication-grade report to {MD_REPORT_PATH}")
 
 
 def generate_pptx_deck(top_bat, top_bowl, ml_metrics, emp_params, val_sens_data=None):
     """Generate a 10-slide widescreen presentation deck with Rajasthan Royals dark styling."""
-    print("🎨 Generating assets/SupeRR_Selector_S2_Methodology_Report.pptx...")
+    print("Generating assets/SupeRR_Selector_S2_Methodology_Report.pptx...")
     os.makedirs(ASSETS_DIR, exist_ok=True)
 
     prs = Presentation()
@@ -731,7 +731,7 @@ def generate_pptx_deck(top_bat, top_bowl, ml_metrics, emp_params, val_sens_data=
         p.font.color.rgb = COLOR_WHITE
 
     prs.save(PPTX_REPORT_PATH)
-    print(f"✅ Saved 10-slide presentation deck to {PPTX_REPORT_PATH}")
+    print(f"Saved 10-slide presentation deck to {PPTX_REPORT_PATH}")
 
 
 def main():

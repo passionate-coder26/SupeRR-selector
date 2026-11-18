@@ -1,4 +1,4 @@
-# 🏏 Rajasthan Royals SupeRR Selector Season 2 — Round 1 Methodology Briefing
+# Rajasthan Royals SupeRR Selector Season 2 — Round 1 Methodology Briefing
 ## Identifying the Most Reliable Players Under Pressure in T20 Cricket (2022–2026)
 **Submission Date:** November 18, 2026 | **Platform:** The Pink Canvas OS | **Deliverables:** Streamlit App & Publication-Grade PDF
 **Dataset:** Official 2022–2026 Historical Relational Data Pack (**200,999 Deliveries**, **867 Matches**, **7,714 Wides Reconciled**)
@@ -6,7 +6,7 @@
 
 ---
 
-## 🏆 1. EXECUTIVE SUMMARY: OFFICIAL TOP 10 RANKINGS
+## 1. EXECUTIVE SUMMARY: OFFICIAL TOP 10 RANKINGS
 
 Our pure, self-governing **4-Stage Probabilistic & Econometric Machine Learning Pipeline** eliminates all manual thresholds, arbitrary weights, and fixed penalties. Every parameter is learned directly from the 200,999 deliveries:
 
@@ -48,7 +48,7 @@ Our pure, self-governing **4-Stage Probabilistic & Econometric Machine Learning 
 
 <div style="page-break-before: always;"></div>
 
-## 🎯 2. IPL 2027 AUCTION ACTIONABILITY & ROSTER STRATEGY FOR RAJASTHAN ROYALS
+## 2. IPL 2027 AUCTION ACTIONABILITY & ROSTER STRATEGY FOR RAJASTHAN ROYALS
 
 > **Context:** The official dataset contains no external contract or retention flags. While our models evaluate the full global pool with pure mathematical objectivity, we categorize the Top 10 (and Top 15 bubble) into an executive 3-tier auction actionability matrix for Rajasthan Royals:
 
@@ -68,7 +68,7 @@ Our pure, self-governing **4-Stage Probabilistic & Econometric Machine Learning 
 
 ---
 
-## ⚙️ 3. THE 4-STEP ENGINE: PROCESS FLOW & LEARNED PARAMETERS
+## 3. THE 4-STEP ENGINE: PROCESS FLOW & LEARNED PARAMETERS
 
 | Pipeline Stage | Mathematical Technique | Learned Parameter Value | Purpose & Cricket Grounding |
 |:---------------|:-----------------------|:-----------------------:|:----------------------------|
@@ -94,7 +94,7 @@ Our pure, self-governing **4-Stage Probabilistic & Econometric Machine Learning 
 
 ---
 
-## 🔬 4. EMPIRICAL VALIDATION, SENSITIVITY & FORENSIC AUDIT
+## 4. EMPIRICAL VALIDATION, SENSITIVITY & FORENSIC AUDIT
 
 ### A. 8-Way Methodological Ablation & Baseline Benchmark Table
 To prove rankings are invariant to modeling choices, we benchmarked the pipeline against 7 alternative specifications across all 200,999 deliveries:
@@ -147,9 +147,9 @@ To guard against data leakage, all expectation models were trained strictly on *
 
 | Machine Learning Model | Evaluation Metric | 2022–2024 Train (In-Sample) | 2025–2026 Test (Out-of-Time) | Generalization Verdict |
 |:-----------------------|:------------------|:---------------------------:|:----------------------------:|:-----------------------|
-| **Model 1: Win Probability** | ROC-AUC / Brier Score | 0.8657 / 0.1488 | **0.8554 / 0.1596** | ✅ Zero overfitting; excellent out-of-time calibration. |
-| **Model 2: Expected Runs** | RMSE / MAE (Runs/ball) | 1.7161 / 1.2965 | **1.7604 / 1.3415** | ✅ Stable situational run expectation across match eras. |
-| **Model 3: Expected Dismissal** | ROC-AUC / Brier Score | 0.6096 / 0.0524 | **0.6006 / 0.0531** | ✅ Highly calibrated wicket baseline (~5.3% base rate). |
+| **Model 1: Win Probability** | ROC-AUC / Brier Score | 0.8657 / 0.1488 | **0.8554 / 0.1596** | Pass: Zero overfitting; excellent out-of-time calibration. |
+| **Model 2: Expected Runs** | RMSE / MAE (Runs/ball) | 1.7161 / 1.2965 | **1.7604 / 1.3415** | Pass: Stable situational run expectation across match eras. |
+| **Model 3: Expected Dismissal** | ROC-AUC / Brier Score | 0.6096 / 0.0524 | **0.6006 / 0.0531** | Pass: Highly calibrated wicket baseline (~5.3% base rate). |
 
 - **Multi-Year Skill Persistence:** Inter-season correlation across active players confirms high-pressure reliability is a repeatable talent: Batters **$r = 0.3758$** ($p < 0.0001$), Bowlers **$r = 0.3130$** ($p < 0.0001$).
 - **Out-of-Time Cohort Lift (2025–2026 Test Period):** Top 10 Batters delivered **161.4 HP SR** vs. pool average 144.8 (**+16.6 pts lift**); Top 10 Bowlers held **7.95 HP Econ** vs. pool average 8.88 (**-0.93 RPO suppression**).
@@ -158,7 +158,7 @@ To guard against data leakage, all expectation models were trained strictly on *
 
 <div style="page-break-before: always;"></div>
 
-## 📋 5. APPENDIX: BUBBLE CONTENDERS (RANKS 11–20) & 2026 ACTIVE SCREEN
+## 5. APPENDIX: BUBBLE CONTENDERS (RANKS 11–20) & 2026 ACTIVE SCREEN
 
 | Category | Rank | ID | Player Name | Role | PRR | 90% CI | $P(\text{Top-10})$ | HP Balls | IPL % | 2026 Balls | Strategic Scouting Profile |
 |:---------|:----:|:--:|:------------|:----:|:---:|:------:|:--------------------:|:--------:|:-----:|:----------:|:---------------------------|
