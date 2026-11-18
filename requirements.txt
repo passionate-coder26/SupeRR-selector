@@ -4,6 +4,8 @@ numpy
 scikit-learn
 scipy
 plotly
+matplotlib
+markdown
 openpyxl
 tabulate
 pypdf

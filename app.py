@@ -447,17 +447,22 @@ with tab2:
         "Unstop Rank", "Player Name", "Total Balls", "HP Balls (L_i >= L*)", "HP Matches", "Base SR", "HP SR",
         "Clutch Elevation (Delta_EB)", "Consistency %", "90% CI", "P(Top-10)", "IPL HP %", "PRR Score"
     ]
+    bat_styler = display_bat_table.style.format({
+        "Base SR": "{:.1f}",
+        "HP SR": "{:.1f}",
+        "Clutch Elevation (Delta_EB)": "{:+.2f}",
+        "Consistency %": "{:.1f}%",
+        "P(Top-10)": "{:.1f}%",
+        "IPL HP %": "{:.1f}%",
+        "PRR Score": "{:.2f}"
+    })
+    try:
+        bat_styler = bat_styler.background_gradient(subset=["PRR Score"], cmap="RdPu")
+    except Exception:
+        pass
     st.dataframe(
-        display_bat_table.style.format({
-            "Base SR": "{:.1f}",
-            "HP SR": "{:.1f}",
-            "Clutch Elevation (Delta_EB)": "{:+.2f}",
-            "Consistency %": "{:.1f}%",
-            "P(Top-10)": "{:.1f}%",
-            "IPL HP %": "{:.1f}%",
-            "PRR Score": "{:.2f}"
-        }).background_gradient(subset=["PRR Score"], cmap="RdPu"),
-        use_container_width=True,
+        bat_styler,
+        width="stretch",
         hide_index=True
     )
 
@@ -548,17 +553,22 @@ with tab3:
         "Unstop Rank", "Player Name", "Role", "Total Balls", "HP Balls (L_i >= L*)", "HP Matches", "Base Econ", "HP Econ",
         "Clutch Elevation (Delta_EB)", "Consistency %", "90% CI", "P(Top-10)", "IPL HP %", "PRR Score"
     ]
+    bowl_styler = display_bowl_table.style.format({
+        "Base Econ": "{:.2f}",
+        "HP Econ": "{:.2f}",
+        "Clutch Elevation (Delta_EB)": "{:+.2f}",
+        "Consistency %": "{:.1f}%",
+        "P(Top-10)": "{:.1f}%",
+        "IPL HP %": "{:.1f}%",
+        "PRR Score": "{:.2f}"
+    })
+    try:
+        bowl_styler = bowl_styler.background_gradient(subset=["PRR Score"], cmap="Blues")
+    except Exception:
+        pass
     st.dataframe(
-        display_bowl_table.style.format({
-            "Base Econ": "{:.2f}",
-            "HP Econ": "{:.2f}",
-            "Clutch Elevation (Delta_EB)": "{:+.2f}",
-            "Consistency %": "{:.1f}%",
-            "P(Top-10)": "{:.1f}%",
-            "IPL HP %": "{:.1f}%",
-            "PRR Score": "{:.2f}"
-        }).background_gradient(subset=["PRR Score"], cmap="Blues"),
-        use_container_width=True,
+        bowl_styler,
+        width="stretch",
         hide_index=True
     )
 
@@ -686,7 +696,7 @@ with tab4:
                 "Bowlers Spearman ρ": f"{s['bowlers']['spearman_rho']:.4f}",
                 "Bowlers Top 10 Overlap": s['bowlers']['top10_overlap'],
             })
-        st.dataframe(pd.DataFrame(abl_rows), use_container_width=True, hide_index=True)
+        st.dataframe(pd.DataFrame(abl_rows), width="stretch", hide_index=True)
     else:
         st.info("Ablation data will be rendered upon running the analytics engine.")
 
@@ -700,7 +710,7 @@ with tab4:
             "innings_name", "regime", "deliveries", "sr", "econ", "dot_pct", "wicket_risk_pct", "mean_abs_delta_wp_pts"
         ]]
         ph_df.columns = ["Innings Phase", "Regime", "Legal Balls", "SR", "Economy", "Dot %", "Wicket Risk %", "Mean |Delta WP| (pts)"]
-        st.dataframe(ph_df, use_container_width=True, hide_index=True)
+        st.dataframe(ph_df, width="stretch", hide_index=True)
 
         swings = post_hoc.get("live_win_probability_swing_multipliers", {})
         m1_col, m2_col = st.columns(2)
@@ -728,7 +738,7 @@ with tab4:
         envs = hygiene.get("three_tier_scoring_environments", [])
         if envs:
             st.markdown("##### 3-Tier Scoring Environments Benchmark:")
-            st.dataframe(pd.DataFrame(envs)[["environment", "matches", "avg_first_innings_par", "avg_rpo", "description"]], use_container_width=True, hide_index=True)
+            st.dataframe(pd.DataFrame(envs)[["environment", "matches", "avg_first_innings_par", "avg_rpo", "description"]], width="stretch", hide_index=True)
 
     st.markdown("---")
     st.markdown("#### Temporal Out-of-Sample Validation (2022–2024 Train vs. 2025–2026 Test)")
@@ -814,9 +824,9 @@ with tab4:
             bat_m_df = pd.DataFrame(matrix["batters"])[["Rank", "Player", "2022", "2023", "2024", "2025", "2026"]]
             bowl_m_df = pd.DataFrame(matrix["bowlers"])[["Rank", "Player", "2022", "2023", "2024", "2025", "2026"]]
             st.markdown("##### Top 10 Batters Annual Net Value (Runs / 100 Balls):")
-            st.dataframe(bat_m_df, use_container_width=True, hide_index=True)
+            st.dataframe(bat_m_df, width="stretch", hide_index=True)
             st.markdown("##### Top 10 Bowlers Annual Net Value (Runs / 100 Balls):")
-            st.dataframe(bowl_m_df, use_container_width=True, hide_index=True)
+            st.dataframe(bowl_m_df, width="stretch", hide_index=True)
 
     # 6. Appendix B: Bubble Contenders (Ranks 11-20)
     bubble_data = val_sens_data.get("appendix_b_bubble_contenders", {})
@@ -828,11 +838,11 @@ with tab4:
         with bb_col1:
             st.markdown("##### Batters Bubble (Ranks 11–20):")
             if "batters_ranks_11_20" in bubble_data:
-                st.dataframe(pd.DataFrame(bubble_data["batters_ranks_11_20"])[["Rank", "Player", "PRR_Score", "PRR_CI_90", "P_Top_10_Pct", "HP_Deliveries", "IPL_HP_Share_Pct", "Active_2026_Balls"]], use_container_width=True, hide_index=True)
+                st.dataframe(pd.DataFrame(bubble_data["batters_ranks_11_20"])[["Rank", "Player", "PRR_Score", "PRR_CI_90", "P_Top_10_Pct", "HP_Deliveries", "IPL_HP_Share_Pct", "Active_2026_Balls"]], width="stretch", hide_index=True)
         with bb_col2:
             st.markdown("##### Bowlers Bubble (Ranks 11–20):")
             if "bowlers_ranks_11_20" in bubble_data:
-                st.dataframe(pd.DataFrame(bubble_data["bowlers_ranks_11_20"])[["Rank", "Player", "Role", "PRR_Score", "PRR_CI_90", "P_Top_10_Pct", "HP_Deliveries", "IPL_HP_Share_Pct", "Active_2026_Balls"]], use_container_width=True, hide_index=True)
+                st.dataframe(pd.DataFrame(bubble_data["bowlers_ranks_11_20"])[["Rank", "Player", "Role", "PRR_Score", "PRR_CI_90", "P_Top_10_Pct", "HP_Deliveries", "IPL_HP_Share_Pct", "Active_2026_Balls"]], width="stretch", hide_index=True)
         st.info("Active 2026 Screen: 20 of 20 players in official Top 10 are active in recent cycles. Screen cleanly filters retired veterans (e.g. Andre Russell 0 balls, Dinesh Karthik 0 balls in 2026).")
 
 # =============================================================================
